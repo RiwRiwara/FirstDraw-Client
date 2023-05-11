@@ -1,11 +1,13 @@
 import React, { useState } from 'react'
 import Navbar from '../../components/common/navbar/navbar'
 import "./style.css"
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useLogin } from '../../hooks/ีuseLogin'
 
 
 function Login() {
+    const navigate = useNavigate();
+
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const {login, error, isLoading} = useLogin()
@@ -13,6 +15,16 @@ function Login() {
     const submitForm = async (e) => {
         e.preventDefault()
         await login(email, password)
+        navigate('/', { replace: true });
+    }
+
+    const adminLogin = async () => {
+        await login('Havedist@gmail.com','ssdsdA**A56Sf')
+        navigate('/', { replace: true });
+    }
+    const userLogin = async () => {
+        await login('logout@gmail.com','.Awirut3526294')
+        navigate('/', { replace: true });
     }
 
     return (
@@ -54,6 +66,8 @@ function Login() {
                         <label class="form-check-label" for="">Remember me</label>
                     </div>
                     <button type="submit" class="btn btn-primary w-100">Login</button>
+                    <a type='button' className='btn' onClick={adminLogin}>admin</a>
+                    <a  type='button' className='btn' onClick={userLogin}>user</a>
                 </form>
                 <div class="text-center mt-3">Don’t have an account?<Link to="/regsiter">Register</Link></div>
             </div>

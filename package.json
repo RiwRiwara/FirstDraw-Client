@@ -17,6 +17,7 @@
     "react-quill": "^2.0.0",
     "react-router-dom": "^6.9.0",
     "react-scripts": "5.0.1",
+    "react-transition-group": "^4.4.5",
     "sass": "^1.62.1",
     "sweetalert2": "^11.7.3",
     "web-vitals": "^2.1.4"

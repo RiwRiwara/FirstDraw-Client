@@ -7,7 +7,10 @@ import ReactQuill from "react-quill"
 import 'react-quill/dist/quill.snow.css';
 import Navbar from "../../components/common/navbar/navbar";
 
+
 export default function FromComponent() {
+
+
   const [state, setState] = useState({
     title: "",
     author: "",

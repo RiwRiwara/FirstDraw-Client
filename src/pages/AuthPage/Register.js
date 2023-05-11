@@ -1,11 +1,12 @@
 import Navbar from '../../components/common/navbar/navbar'
 import "./style.css"
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import React, { useState } from 'react'
 import { useSignup } from '../../hooks/useSignup';
 import Swal from "sweetalert2";
 
 function Register() {
+    const navigate = useNavigate();
     const [displayname, setDisplayname] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
@@ -18,6 +19,7 @@ function Register() {
             Swal.fire("Notification", "password does not match!", "error");
           }else{
               await signup(displayname, email, password)
+              navigate('/login', { replace: true });
           }
     }
 

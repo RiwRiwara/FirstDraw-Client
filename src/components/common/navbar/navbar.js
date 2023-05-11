@@ -106,7 +106,7 @@ function Navbar() {
               </li>
               {user && (
                 <li className="nav-item ">
-                  <a className="nav-link text-primary" href="/">
+                  <a className="nav-link text-primary" href="/profile">
                     Profile
                   </a>
                 </li>

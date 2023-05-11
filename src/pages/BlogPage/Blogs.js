@@ -1,8 +1,11 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import Navbar from "../../components/common/navbar/navbar";
+import { useAuthContext } from "../../hooks/useAuthContext";
 
 function Blogs() {
+  const { user } = useAuthContext()
+  const isAdmin = user && user.data && user.data.isAdmin;
   const [blogs, setBlogs] = useState([]);
 
   const fecthData = () => {
@@ -25,11 +28,14 @@ function Blogs() {
       <div className="container mt-4">
         <div className="h1 mb-3 fw-bold">Blogs</div>
 
-        <a className="custom-color" href="/create">
+        { isAdmin && ( 
+                 <a className="custom-color" href="/create">
           <button type="" className="btn btn-primary w-100 customBtn">
             Create blog
           </button>
         </a>
+        )}
+
 
         {blogs.map((blog, index) => (
           <div className="row" key={index} style={{ borderBottom: '1px solid silver' }}>

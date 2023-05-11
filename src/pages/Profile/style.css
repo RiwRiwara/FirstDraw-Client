@@ -1,0 +1,38 @@
+.profileimg{
+    width: 10rem;
+}
+.rootBox{
+    padding: 1rem;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    width: 35%;
+}
+
+.fade-enter {
+    opacity: 0;
+  }
+  
+  .fade-enter-active {
+    opacity: 1;
+    transition: opacity 300ms ease-in;
+  }
+  
+  .fade-exit {
+    opacity: 1;
+  }
+  
+  .fade-exit-active {
+    opacity: 0;
+    transition: opacity 300ms ease-out;
+  }
+  
+  
+@media (max-width: 800px) {
+    .rootBox{
+        width: 100%;
+    }
+  }
+
+
