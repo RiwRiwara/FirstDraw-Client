@@ -1,17 +1,23 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LandingPage from "./pages/LandingPage/LandingPage";
-import Navbar from "./components/common/navbar/navbar";
 import Footer from "./components/common/footer/footer";
 import Blogs from "./pages/BlogPage/Blogs";
+import FromComponent from "./pages/BlogPage/FromComponent";
+import SingleComponent from "./pages/BlogPage/SingleComponent";
+import Login from "./pages/AuthPage/Login";
+import Register from "./pages/AuthPage/Register";
 
 const MyRoute = () => {
   return (
     <div>
-        <Navbar/>
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<LandingPage />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/regsiter" element={<Register />} />
           <Route path="/blogs" element={<Blogs />} />
+          <Route path="/create" element={<FromComponent />} />
+          <Route path="/blogs/:slug" element={<SingleComponent />} />
           </Routes>
       </BrowserRouter>
       <Footer/>

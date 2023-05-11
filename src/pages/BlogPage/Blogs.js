@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import {Link} from "react-router-dom";
+import Navbar from "../../components/common/navbar/navbar";
 
 function Blogs() {
   const [blogs, setBlogs] = useState([]);
@@ -18,24 +18,33 @@ function Blogs() {
   useEffect(() => {
     fecthData();
   }, []);
-  return (
-    <div className="container p-4">
-      <div className="h1 mb-3">Blogs</div>
-      <a className="dropdown-item custom-color o" href="/create">
-                    Create Blog
-                  </a>
 
-      {blogs.map((blog, index) => (
-        <div className="row" key={index} style={{borderBottom: '1px solid silver'}}>
-          <div className="col pt-3 pb-2">
-            <Link to={`${blog.slug}`}>
-            <h3>{blog.title}</h3>
-            </Link>
-            <p>{blog.content.substring(0,100)}. . .<Link to={`${blog.slug}`}>more</Link></p>
-            <p className="text-muted">Author : {blog.author}, Public : {new Date(blog.createdAt).toLocaleString()}</p>
+  return (
+    <div>
+      <Navbar />
+      <div className="container mt-4">
+        <div className="h1 mb-3 fw-bold">Blogs</div>
+
+        <a className="custom-color" href="/create">
+          <button type="" className="btn btn-primary w-100 customBtn">
+            Create blog
+          </button>
+        </a>
+
+        {blogs.map((blog, index) => (
+          <div className="row" key={index} style={{ borderBottom: '1px solid silver' }}>
+            <div className="col pt-3 pb-2">
+              <a href={`blogs/${blog.slug}`}>
+                <h3>{blog.title}</h3>
+              </a>
+
+              <p>{<div dangerouslySetInnerHTML={{ __html: (blog.content.substring(0, 200)) }} />}. . .<a href={`blogs/${blog.slug}`}>more</a></p>
+
+              <p className="text-muted">Author : {blog.author}, Public : {new Date(blog.updatedAt).toLocaleString()}</p>
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 }
