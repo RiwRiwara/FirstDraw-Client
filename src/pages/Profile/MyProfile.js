@@ -6,6 +6,7 @@ import { CSSTransition } from "react-transition-group";
 import Swal from "sweetalert2";
 import axios from "axios";
 import PublicProfile from "./PublicProfile";
+import uploadImageToAzure from "../../utils/UploadImage";
 
 export default function MyProfile() {
   const user = JSON.parse(localStorage.getItem("user")).data;
@@ -15,14 +16,20 @@ export default function MyProfile() {
       .then((response) => {
         setDname(response.data.displayname);
         setBio(response.data.bio);
+        setUid(response.data._id)
+        if(response.data.profile_img){
+          setSelectedImage(response.data.profile_img)
+        }
       })
       .catch((err) => { });
-  }, []);
+  }, [user.user.email]);
 
   const [activeSection, setActiveSection] = useState("Account");
-  const [textReset, settextReset] = useState("Reset password");
   const [selectedImage, setSelectedImage] = useState(profile);
+  const [imgFile, setImagefile] = useState()
+  const [file, setfile] = useState()
   const [dname, setDname] = useState(user.user.displayname);
+  const [uid, setUid] = useState();
   const [bio, setBio] = useState(user.user.bio);
   const [newPassword, setNewPassword] = useState("");
   const [rePassword, setRePassword] = useState("");
@@ -30,14 +37,14 @@ export default function MyProfile() {
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
     const reader = new FileReader();
-
     reader.onloadend = () => {
       setSelectedImage(reader.result);
     };
-
     if (file) {
       reader.readAsDataURL(file);
     }
+    setImagefile(reader)
+    setfile(file)
   };
 
   const saveName = (e) => {
@@ -48,7 +55,7 @@ export default function MyProfile() {
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, delete it!'
+      confirmButtonText: 'Yes, change it!'
     }).then((result) => {
       if (result.isConfirmed) {
         const name = e.target.getAttribute("name");
@@ -95,32 +102,53 @@ export default function MyProfile() {
               Swal.fire("Incompleted!", "Data not updated", "error");
             });
         }
-      } else if (result.isDenied) {
-        return;
+      } else {
+        setBio(user.user.bio)
+        setDname(user.user.displayname)
+
       }
     });
   };
 
   const saveOnclick = async () => {
+    if(selectedImage===profile){
+      Swal.fire("Warning", "Please select a profile image", "warning");
+    }else{
     Swal.fire({
-      title: "Do you want to save the changes?",
-      showDenyButton: true,
+      title: 'Are you sure?',
+      text: "Are you sure to keep this change?",
+      icon: 'warning',
       showCancelButton: true,
-      confirmButtonText: "Save",
-      denyButtonText: `Don't save`,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, change it!'
     }).then((result) => {
       if (result.isConfirmed) {
-        Swal.fire("Saved!", "", "success");
+        axios
+        .put(`${process.env.REACT_APP_API}/user/${user.user.email}`, {
+          profile_img: `${process.env.REACT_APP_AZURE_API}/userprofile/${uid}_profile.jpeg`,
+        })
+        .then((res) => {
+          uploadImageToAzure(imgFile, file, uid)
+          Swal.fire("Complete", "profile has been changed!", "success");
+        })
+        .catch((err) => {
+          Swal.fire("Incompleted!", "Data not updated", "error");
+        });
+        
       } else if (result.isDenied) {
         Swal.fire("Changes are not saved", "", "info");
       }
     });
+  }
   };
+
   const handleSectionToggle = (sectionName) => {
     setActiveSection(sectionName);
   };
   return (
     <div>
+
       <Navbar />
       <div className="rootBox pt-3 rounded-1">
         <div className="container">
@@ -288,15 +316,13 @@ export default function MyProfile() {
               <div className="d-flex justify-content-center">
                 <img
                   src={selectedImage}
-                  className="rounded-top  profileimg"
+                  className="rounded-top  profileimg mb-3"
                   style={{ aspectRatio: "2/2" }}
                   alt=""
                 />
               </div>
               <div className="mb-3">
-                <label htmlFor="formFile" className="form-label">
-                  Upload image profile.
-                </label>
+          
                 <input
                   className="form-control"
                   type="file"
@@ -323,7 +349,7 @@ export default function MyProfile() {
           unmountOnExit
         >
           <section name="Public">
-            <PublicProfile />
+            <PublicProfile img={selectedImage} />
           </section>
         </CSSTransition>
 

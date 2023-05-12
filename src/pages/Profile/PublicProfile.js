@@ -1,20 +1,9 @@
-import profile from "../../assets/images/dummy-profile.png"
 import React, {useEffect,  useState } from 'react';
-import axios from "axios";
 
-function PublicProfile() {
-    const user = JSON.parse(localStorage.getItem('user')).data;
-    useEffect(() => {
-      axios
-        .get(`${process.env.REACT_APP_API}/user/${user.user.email}`)
-        .then((response) => {
-            setDname(response.data.displayname)
-        })
-        .catch((err) => {
-        });
-    }, []);
-    const [dname, setDname] = useState(user.user.displayname)
-    const [selectedImage, setSelectedImage] = useState(profile);
+
+function PublicProfile(props) {
+    const selectedImage = props.img;
+
 
     return (
         <div>

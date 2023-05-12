@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import React, { useState } from 'react'
 import { useSignup } from '../../hooks/useSignup';
 import Swal from "sweetalert2";
+import { useLogin } from '../../hooks/ีuseLogin';
 
 function Register() {
     const navigate = useNavigate();
@@ -12,6 +13,7 @@ function Register() {
     const [password, setPassword] = useState('')
     const [password2, setPassword2] = useState('')
     const {signup, err, isLoading} = useSignup()
+    const {login} = useLogin()
 
     const submitForm = async (e) => {
         e.preventDefault()

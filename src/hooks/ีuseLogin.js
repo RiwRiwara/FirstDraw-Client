@@ -23,7 +23,7 @@ export const useLogin = () => {
                 Swal.fire("Notification", "Login Successful", "success");
             })
             .catch((err) => {
-                Swal.fire("Notification", err.response.data.error, "error");
+                Swal.fire("Notification", err.response, "error");
                 setIsLoading(false)
                 setError(err)
             });
