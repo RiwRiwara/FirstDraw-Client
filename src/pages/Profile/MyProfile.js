@@ -124,9 +124,12 @@ export default function MyProfile() {
       confirmButtonText: 'Yes, change it!'
     }).then((result) => {
       if (result.isConfirmed) {
+        const timestamp = Date.now(); // Generate a unique timestamp
+        const imageUrl = `${process.env.REACT_APP_AZURE_API}/userprofile/${uid}_profile.jpeg?t=${timestamp}`;
+        
         axios
         .put(`${process.env.REACT_APP_API}/user/${user.user.email}`, {
-          profile_img: `${process.env.REACT_APP_AZURE_API}/userprofile/${uid}_profile.jpeg`,
+          profile_img: imageUrl,
         })
         .then((res) => {
           uploadImageToAzure(imgFile, file, uid)
