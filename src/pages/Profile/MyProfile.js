@@ -7,6 +7,7 @@ import Swal from "sweetalert2";
 import axios from "axios";
 import PublicProfile from "./PublicProfile";
 import uploadImageToAzure from "../../utils/UploadImage";
+import Premium from "./Premuim";
 
 export default function MyProfile() {
   const user = JSON.parse(localStorage.getItem("user")).data;
@@ -236,7 +237,7 @@ export default function MyProfile() {
                 <div className="col-12 col-md-8 mt-1">
                   <input
                     type="text"
-                    className="form-control"
+                    className="form-control pe-none"
                     value={user.user.email}
                   />
                 </div>
@@ -246,7 +247,7 @@ export default function MyProfile() {
                 <div className="col-12 col-md-8 mt-1">
                   <input
                     type="text"
-                    className="form-control"
+                    className="form-control pe-none"
                     value={user.user.tier}
                   />
                 </div>
@@ -320,7 +321,7 @@ export default function MyProfile() {
                 <img
                   src={selectedImage}
                   className="rounded-top  profileimg mb-3"
-                  style={{ aspectRatio: "2/2" }}
+                  style={{ aspectRatio: "4/5" }}
                   alt=""
                 />
               </div>
@@ -352,7 +353,11 @@ export default function MyProfile() {
           unmountOnExit
         >
           <section name="Public">
-            <PublicProfile img={selectedImage} />
+            <PublicProfile 
+            img={selectedImage} 
+            displayname={dname}
+            bio={bio}
+            />
           </section>
         </CSSTransition>
 
@@ -363,7 +368,8 @@ export default function MyProfile() {
           unmountOnExit
         >
           <section name="Premium">
-            <div className="container mt-3"></div>
+            <Premium
+            />
           </section>
         </CSSTransition>
       </div>

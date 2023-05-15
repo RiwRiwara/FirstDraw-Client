@@ -8,7 +8,8 @@ import Login from "./pages/AuthPage/Login";
 import Register from "./pages/AuthPage/Register";
 import MyProfile from "./pages/Profile/MyProfile";
 import PrivateRoute from "./utils/PrivateRoutes";
-import React, { Fragment } from 'react';
+import React from 'react';
+import News from "./pages/NewsPage/NewsPage";
 
 const MyRoute = () => {
   return (
@@ -17,14 +18,16 @@ const MyRoute = () => {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<Login />} />
-          <Route exact path='/' element={<PrivateRoute />}>
-            <Route path="/profile" element={<MyProfile />} />
-          </Route>
-          {/* <Route path="/profile" element={<MyProfile />} /> */}
           <Route path="/regsiter" element={<Register />} />
           <Route path="/blogs" element={<Blogs />} />
-          <Route path="/create" element={<FromComponent />} />
+          <Route path="/news" element={<News />} />
           <Route path="/blogs/:slug" element={<SingleComponent />} />
+
+          <Route exact path='/' element={<PrivateRoute />}>
+            <Route path="/profile" element={<MyProfile />} />
+            <Route path="/create" element={<FromComponent />} />
+          </Route>
+
         </Routes>
       </BrowserRouter>
       <Footer />

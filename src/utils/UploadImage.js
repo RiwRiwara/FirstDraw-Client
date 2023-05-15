@@ -25,7 +25,6 @@ const uploadImageToAzure = async (file, meta, uid) => {
   await new Promise((resolve) => img.onload = resolve);
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
-
   canvas.width = 200;
   canvas.height = 200;
 

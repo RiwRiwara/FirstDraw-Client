@@ -13,9 +13,10 @@ export const useLogin = () => {
         setError(null)
 
         axios
-            .post(`${process.env.REACT_APP_API}/user/login`, { email, password })
+            .post(`${process.env.REACT_APP_API}/login`, { email, password })
             .then((response) => {
                 localStorage.setItem('user', JSON.stringify(response))
+                localStorage.setItem('token', response.data.token);
 
                 dispatch({type:'LOGIN', payload:response})
                 setIsLoading(false)

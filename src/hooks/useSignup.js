@@ -13,7 +13,7 @@ export const useSignup = () => {
         setError(null)
 
         axios
-            .post(`${process.env.REACT_APP_API}/user/signup`, { displayname, email, password })
+            .post(`${process.env.REACT_APP_API}/signup`, { displayname, email, password })
             .then((response) => {
                 localStorage.setItem('user', JSON.stringify(response))
 

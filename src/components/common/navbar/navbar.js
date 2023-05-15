@@ -55,7 +55,7 @@ function Navbar() {
                     </a>
                   </li>
                   <li>
-                    <a className="dropdown-item " href="/">
+                    <a className="dropdown-item " href="/news">
                       News
                     </a>
                   </li>
@@ -98,7 +98,7 @@ function Navbar() {
                     </a>
                   </li>
                   <li>
-                    <a className="dropdown-item " href="/">
+                    <a className="dropdown-item " href="/news">
                       News
                     </a>
                   </li>

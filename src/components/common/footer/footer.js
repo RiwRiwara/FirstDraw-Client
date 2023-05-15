@@ -16,7 +16,7 @@ function Footer() {
             </p>
           </div>
           <div className="p-1">
-            firstdraw.com Develope by Riw.<br></br>
+            firstdraw.com Develop by Riw.<br></br>
             <div className="d-flex flex-row justify-content-between py-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"

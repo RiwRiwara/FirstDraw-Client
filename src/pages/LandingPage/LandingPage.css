@@ -1,7 +1,68 @@
-*{
-    padding: 0;
-    margin: 0;
+.hov .card:hover {
+  transform: scale(1.1);
+  transition: transform 0.3s ease;
 }
-main{
-    margin-top: 1rem;
+.image-container {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+
+.image-container:hover {
+  transform: scale(1.1);
+}
+
+
+.btn-outline-primary:hover .bi {
+  color: white;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-in forwards;
+}
+
+.fade-out {
+  animation: fadeOut 0.5s ease-out forwards;
+}
+
+
+
+@media (max-width: 800px) {
+  .hov .card:hover {
+    transform: scale(1);
+
+  }
+
+  .cardlist .card {
+    margin: auto;
+
+  }
+
+  .fcol {
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+.filter{
+  height:20rem;
 }

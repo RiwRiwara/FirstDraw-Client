@@ -28,28 +28,31 @@ function Blogs() {
       <div className="container mt-4">
         <div className="h1 mb-3 fw-bold">Blogs</div>
 
-        { isAdmin && ( 
-                 <a className="custom-color" href="/create">
-          <button type="" className="btn btn-primary w-100 customBtn">
-            Create blog
-          </button>
-        </a>
+        {isAdmin && (
+          <a className="" href="/create">
+            <button type="" className="btn btn-primary w-100 mb-4">
+              Create blog
+            </button>
+          </a>
         )}
 
-
         {blogs.map((blog, index) => (
-          <div className="row" key={index} style={{ borderBottom: '1px solid silver' }}>
-            <div className="col pt-3 pb-2">
-              <a href={`blogs/${blog.slug}`}>
-                <h3>{blog.title}</h3>
-              </a>
-
-              <p>{<div dangerouslySetInnerHTML={{ __html: (blog.content.substring(0, 200)) }} />}. . .<a href={`blogs/${blog.slug}`}>more</a></p>
-
-              <p className="text-muted">Author : {blog.author}, Public : {new Date(blog.updatedAt).toLocaleString()}</p>
+          <div class="card mb-3">
+            <a href={`blogs/${blog.slug}`}>
+              <div class="h5 fw-bold card-header">
+              {blog.title}
+              </div>
+            </a>
+            <div class="card-body">
+              <blockquote class=" ">
+                <p>{<div dangerouslySetInnerHTML={{ __html: (blog.content.substring(0, 200)) }} />}. . .<a href={`blogs/${blog.slug}`}>more</a></p>
+                <footer class="blockquote-footer">Author : <cite title="Source Title">{blog.author} &nbsp;</cite>Public : {new Date(blog.updatedAt).toLocaleString()}</footer>
+              </blockquote>
             </div>
           </div>
         ))}
+
+
       </div>
     </div>
   );
