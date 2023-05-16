@@ -2,6 +2,17 @@ import React, { useState, useEffect } from "react";
 import "./LandingPage.css";
 import Navbar from "../../components/common/navbar/navbar";
 import axios from "axios";
+import Select, { StylesConfig } from 'react-select';
+import Box from '@mui/material/Box';
+import Slider from '@mui/material/Slider';
+import * as customStyles from "./customStyles";
+import { levelOptions, typeOptions, raceOptions, frameOptions, attributeOptions } from '../../assets/data/data';
+import makeAnimated from 'react-select/animated';
+import Typography from '@mui/material/Typography';
+
+const animatedComponents = makeAnimated();
+const minDistance = 5;
+
 
 export default function LandingPage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -9,57 +20,77 @@ export default function LandingPage() {
   const [offset, setOffset] = useState(0)
   const [viewMode, setViewMode] = useState('table');
   const [searchResults, setSearchResults] = useState([]);
-  const [showFilter, setShowFilter] = useState(false); // State for showing/hiding the filter zone
+  const [showFilter, setShowFilter] = useState(false);
+  const [selectedFilters, setSelectedFilters] = useState({
+    type: "",
+    race: "",
+    frameType: "",
+    attribute: "",
+    level: [0],
+    defMax: 10000,
+    defMin: 0,
+    atkMax: 10000,
+    atkMin: 0,
+  });
+  const resetFilters = () => {
+    setSelectedFilters({
+      type: "",
+      race: "",
+      frameType: "",
+      attribute: "",
+      level: [0],
+      defMax: 10000,
+      defMin: 0,
+      atkMax: 10000,
+      atkMin: 0,
+    });
+  
+    setSearchTerm("");
+    setAtk([0, 100]);
+    setDef([0, 100]);
 
-
-  const handleSearch = async (event) => {
-    event.preventDefault();
-    try {
-      setSearchResults([]);
-      const response = await axios.get(`${process.env.REACT_APP_API}/cards`, {
-        params: {
-          name: searchTerm,
-          offset: offset,
-          limit: limit,
-        },
-      });
-      setSearchResults(response.data);
-      setOffset(limit);
-    } catch (error) {
-      console.error(error);
-    }
   };
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(async () => {
       try {
         setSearchResults([]);
-
+        const levels = selectedFilters.level.join(",");
+        console.log(levels)
         const response = await axios.get(`${process.env.REACT_APP_API}/cards`, {
           params: {
             name: searchTerm,
+            frameType: selectedFilters.frameType,
+            type: selectedFilters.type,
+            attribute: selectedFilters.attribute,
+            defMin: selectedFilters.defMin,
+            defMax: selectedFilters.defMax,
+            atkMin: selectedFilters.atkMin,
+            atkMax: selectedFilters.atkMax,
+            level: levels,
             offset: offset,
             limit: limit,
+
           },
+
         });
+
 
         setSearchResults(response.data);
         setOffset(limit);
-
-
       } catch (error) {
         console.error(error);
       }
     }, 1000);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [searchTerm]);
+  }, [searchTerm, selectedFilters]);
+
 
   const handleInputChange = (e) => {
     setSearchTerm(e.target.value);
     setOffset(0);
   };
-
 
   const handleViewToggle = () => {
     setViewMode((prevMode) => (prevMode === 'list' ? 'table' : 'list'));
@@ -83,6 +114,7 @@ export default function LandingPage() {
   const handleFilterToggle = () => {
     setShowFilter(!showFilter);
   };
+
   const renderTableRows = () => {
     const itemsPerRowDesktop = 5;
     const rows = [];
@@ -105,9 +137,82 @@ export default function LandingPage() {
       );
       rows.push(row);
     }
-
     return rows;
   };
+
+  const [atkValue, setAtk] = React.useState([0, 100]);
+  const minAtk = atkValue[0] * 100;
+  const maxAtk = atkValue[1] * 100;
+  const handleChangeAtk = (event, newValue, activeThumb) => {
+    if (!Array.isArray(newValue)) {
+      return;
+    }
+    const updatedAtkValue = [...newValue];
+
+    if (activeThumb === 0) {
+      updatedAtkValue[0] = Math.min(newValue[0], atkValue[1] - minDistance);
+    } else {
+      updatedAtkValue[1] = Math.max(newValue[1], atkValue[0] + minDistance);
+    }
+    setAtk(updatedAtkValue);
+    const updatedFilters = { ...selectedFilters, atkMin: updatedAtkValue[0] * 100, atkMax: updatedAtkValue[1] * 100 };
+    setSelectedFilters(updatedFilters);
+  };
+  const [defValue, setDef] = React.useState([0, 100]);
+  const minDef = defValue[0] * 100;
+  const maxDef = defValue[1] * 100;
+  const handleChangeDef = (event, newValue, activeThumb) => {
+    if (!Array.isArray(newValue)) {
+      return;
+    }
+    const updatedDefValue = [...newValue];
+
+    if (activeThumb === 0) {
+      updatedDefValue[0] = Math.min(newValue[0], defValue[1] - minDistance);
+    } else {
+      updatedDefValue[1] = Math.max(newValue[1], defValue[0] + minDistance);
+    }
+    setDef(updatedDefValue);
+    const updatedFilters = { ...selectedFilters, defMin: updatedDefValue[0] * 100, defMax: updatedDefValue[1] * 100 };
+    setSelectedFilters(updatedFilters);
+  };
+
+  const handleFilterChange = (selectedOption, actionMeta) => {
+    const { value } = selectedOption;
+    const name = actionMeta.name;
+
+    let updatedFilters = { ...selectedFilters };
+
+    switch (name) {
+      case "type":
+        updatedFilters = { ...updatedFilters, type: value };
+        break;
+      case "race":
+        updatedFilters = { ...updatedFilters, race: value };
+        break;
+      case "FrameType":
+        updatedFilters = { ...updatedFilters, frameType: value };
+        break;
+      case "attribute":
+        updatedFilters = { ...updatedFilters, attribute: value };
+        break;
+      case "levels":
+        const selectedValues = selectedOption.map(option => option.value);
+        if (selectedValues.includes(0)) {
+          updatedFilters = { ...updatedFilters, level: [0] };
+        } else {
+          updatedFilters = { ...updatedFilters, level: selectedValues };
+        }
+        break;
+      default:
+        console.log(selectedOption);
+        break;
+    }
+
+    setSelectedFilters(updatedFilters);
+    console.log(updatedFilters); // Log the updated filter values
+  };
+
   return (
     <div>
       <Navbar />
@@ -139,6 +244,9 @@ export default function LandingPage() {
               <button type="button" className="btn btn-outline-primary" onClick={handleFilterToggle}>
                 <i className="bi bi-funnel-fill"></i> Filter
               </button>
+              <button type="button" className="btn btn-outline-primary" onClick={resetFilters}>
+              <i class="bi bi-arrow-clockwise"></i>
+              </button>
             </div>
             <select className="form-select ms-2 w-25" aria-label="Default select example" value={limit} onChange={(e) => setLimit(Number(e.target.value))}>
               <option value={5}>Load 5</option>
@@ -146,38 +254,128 @@ export default function LandingPage() {
               <option value={30}>Load 30</option>
               <option value={50}>Load 50</option>
             </select>
-            {/* Filter zone */}
+
 
           </div>
-{showFilter && (
-  <div className="container mt-3 fade-in shadow-sm p-2 filter">
-    <h5 className="fw-bold ">Filter Options</h5>
-   <div className="row">
-      <div className="col-12 col-md-3">
-      <div class="dropdown">
-  <button class="btn btn-secondary dropdown-toggle w-100" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-    Select an option
-  </button>
-  <ul class="dropdown-menu w-100" aria-labelledby="dropdownMenuButton">
-    <li><a class="dropdown-item" href="#">Option 1</a></li>
-    <li><a class="dropdown-item" href="#">Option 2</a></li>
-    <li><a class="dropdown-item" href="#">Option 3</a></li>
-  </ul>
-</div>
+          {showFilter && (
+            <form className={`container mt-3 p-2 filter bg-secondary rounded p-3 ${showFilter ? 'slide-in' : 'slide-out'}`}>
+              <div className="row">
+                <div className="col-12 col-md-2 sel">
+                  <Select
+                    className="basic-single"
+                    isSearchable={true}
+                    classNamePrefix="select"
+                    defaultValue={typeOptions[0]}
+                    menuPortalTarget={document.body}
+                    name="type"
+                    value={typeOptions.find(option => option.value === selectedFilters.type)}
+                    options={typeOptions}
+                    styles={customStyles.customStyles}
+                    onChange={handleFilterChange}
+                  />
+                </div>
+                <div className="col-12 col-md-2 sel">
+                  <Select
+                    className="basic-single"
+                    isSearchable={true}
+                    classNamePrefix="select"
+                    defaultValue={raceOptions[0]}
+                    menuPortalTarget={document.body}
+                    name="race"
+                    value={raceOptions.find(option => option.value === selectedFilters.race)}
+                    options={raceOptions}
+                    styles={customStyles.customStyles}
+                    onChange={handleFilterChange}
 
-      </div>
-      <div className="col-12 col-md-3">asdasdasdasdsds</div>
-      <div className="col-12 col-md-3">asdasdasdasdsds</div>
-      <div className="col-12 col-md-3">asdasdasdasdsds</div>
-   </div>
-  </div>
-)}
-
+                  />
+                </div>
+                <div className="col-12 col-md-2 sel">
+                  <Select
+                    className="basic-single"
+                    isSearchable={true}
+                    classNamePrefix="select"
+                    defaultValue={frameOptions[0]}
+                    menuPortalTarget={document.body}
+                    name="FrameType"
+                    value={frameOptions.find(option => option.value === selectedFilters.frameType)}
+                    options={frameOptions}
+                    styles={customStyles.customStyles}
+                    onChange={handleFilterChange}
+                  />
+                </div>
+                <div className="col-12 col-md-2 sel">
+                  <Select
+                    className="basic-single"
+                    isSearchable={true}
+                    classNamePrefix="select"
+                    defaultValue={attributeOptions[0]}
+                    menuPortalTarget={document.body}
+                    value={attributeOptions.find(option => option.value === selectedFilters.attribute)}
+                    name="attribute"
+                    options={attributeOptions}
+                    styles={customStyles.customStyles}
+                    onChange={handleFilterChange}
+                  />
+                </div>
+                <div className="col-12 col-md-4 sel">
+                  <Select
+                    closeMenuOnSelect={false}
+                    components={animatedComponents}
+                    defaultValue={[levelOptions[0]]}
+                    menuPortalTarget={document.body}
+                    isMulti
+                    value={levelOptions.filter(option => selectedFilters.level.includes(option.value))}
+                    name="levels"
+                    options={levelOptions}
+                    className="basic-multi-select sel"
+                    classNamePrefix="select"
+                    styles={customStyles.customStyles}
+                    onChange={handleFilterChange}
+                  />
+                </div>
+                <div className="row">
+                  <div className="col-12 col-md-6 ">
+                    <Typography variant="h6" gutterBottom>
+                      Attack
+                    </Typography>
+                    <Box display="flex" alignItems="center">
+                      <Box className="flex-start" marginRight={2}>{minAtk}</Box>
+                      <Slider
+                        aria-label="ATK"
+                        value={atkValue}
+                        onChange={handleChangeAtk}
+                        disableSwap
+                      />
+                      <Box className="flex-end" marginLeft={2}>{maxAtk}</Box>
+                    </Box>
+                  </div>
+                  <div className="col-12 col-md-6 ">
+                    <Typography variant="h6" gutterBottom>
+                      Defense
+                    </Typography>
+                    <Box display="flex" alignItems="center">
+                      <Box className="flex-start" marginRight={2}>{minDef}</Box>
+                      <Slider
+                        aria-label="ATK"
+                        value={defValue}
+                        onChange={handleChangeDef}
+                        disableSwap
+                      />
+                      <Box className="flex-end" marginLeft={2}>{maxDef}</Box>
+                    </Box>
+                  </div>
+                </div>
+              </div>
+            </form>
+          )}
 
         </div>
 
+        {searchResults.length === 0 && (
+          <div className="h4 d-flex justify-content-center m-4">Card not found!</div>
+        )}
         {viewMode === "table" && (
-          <div className="container m-2 p-2 hov cardlist">
+          <div className="container m-2 p-2 hov cardlist ">
             {searchResults.map((result) => (
               <div className="card mb-3 p-1" key={result.id}>
                 <div className="row g-0">
@@ -219,18 +417,18 @@ export default function LandingPage() {
 
           </div>
         )}
-        {viewMode ==="list" &&(
-              <div className="container">
-              <div className="row">
-                <div className="col">
-                  <table className="table">
-                    <tbody>
-                      {renderTableRows()}
-                    </tbody>
-                  </table>
-                </div>
+        {viewMode === "list" && (
+          <div className="container">
+            <div className="row">
+              <div className="col">
+                <table className="table">
+                  <tbody>
+                    {renderTableRows()}
+                  </tbody>
+                </table>
               </div>
             </div>
+          </div>
         )}
 
 

@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import Navbar from '../../components/common/navbar/navbar'
 import "./style.css"
 import { Link, useNavigate } from 'react-router-dom'
-import { useLogin } from '../../hooks/ีuseLogin'
+import { useLogin } from '../../hooks/useLogin'
 
 
 function Login() {

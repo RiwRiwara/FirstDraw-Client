@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useAuthContext } from '../hooks/useAuthContext'
+import { useAuthContext } from './useAuthContext'
 import axios from "axios";
 import Swal from "sweetalert2";
 

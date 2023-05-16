@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import React, { useState } from 'react'
 import { useSignup } from '../../hooks/useSignup';
 import Swal from "sweetalert2";
-import { useLogin } from '../../hooks/ีuseLogin';
+import { useLogin } from '../../hooks/useLogin';
 
 function Register() {
     const navigate = useNavigate();

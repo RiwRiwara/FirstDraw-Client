@@ -17,33 +17,36 @@
   color: white;
 }
 
-@keyframes fadeIn {
+@keyframes slideIn {
   0% {
-    opacity: 0;
+    transform: translateX(-100%);
   }
 
   100% {
-    opacity: 1;
+    transform: translateX(0);
   }
 }
 
-@keyframes fadeOut {
+@keyframes slideOut {
   0% {
-    opacity: 1;
+    transform: translateX(0);
   }
 
   100% {
-    opacity: 0;
+    transform: translateX(-100%);
   }
 }
 
-.fade-in {
-  animation: fadeIn 0.5s ease-in forwards;
+.slide-in {
+  animation: slideIn 0.5s ease-in forwards;
 }
 
-.fade-out {
-  animation: fadeOut 0.5s ease-out forwards;
+.slide-out {
+  animation: slideOut 0.5s ease-in forwards;
 }
+
+
+
 
 
 
@@ -64,5 +67,8 @@
   }
 }
 .filter{
-  height:20rem;
+  height:auto;
+}
+.sel{
+  margin-bottom: 0.5rem;
 }
