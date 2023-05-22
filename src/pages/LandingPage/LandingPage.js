@@ -2,21 +2,23 @@ import React, { useState, useEffect } from "react";
 import "./LandingPage.css";
 import Navbar from "../../components/common/navbar/navbar";
 import axios from "axios";
-import Select, { StylesConfig } from 'react-select';
+import Select from 'react-select';
 import Box from '@mui/material/Box';
 import Slider from '@mui/material/Slider';
 import * as customStyles from "./customStyles";
 import { levelOptions, typeOptions, raceOptions, frameOptions, attributeOptions } from '../../assets/data/data';
 import makeAnimated from 'react-select/animated';
 import Typography from '@mui/material/Typography';
+import { useNavigate } from "react-router-dom";
 
 const animatedComponents = makeAnimated();
 const minDistance = 5;
 
 
 export default function LandingPage() {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
-  const [limit, setLimit] = useState(10)
+  const [limit, setLimit] = useState(5)
   const [offset, setOffset] = useState(0)
   const [viewMode, setViewMode] = useState('table');
   const [searchResults, setSearchResults] = useState([]);
@@ -31,7 +33,9 @@ export default function LandingPage() {
     defMin: 0,
     atkMax: 10000,
     atkMin: 0,
+    sort: "az"
   });
+  const [loading, setLoading] = useState(false);
   const resetFilters = () => {
     setSelectedFilters({
       type: "",
@@ -43,8 +47,10 @@ export default function LandingPage() {
       defMin: 0,
       atkMax: 10000,
       atkMin: 0,
+      sort: "az"
+
     });
-  
+
     setSearchTerm("");
     setAtk([0, 100]);
     setDef([0, 100]);
@@ -55,8 +61,9 @@ export default function LandingPage() {
     const delayDebounceFn = setTimeout(async () => {
       try {
         setSearchResults([]);
+        setLoading(true)
+
         const levels = selectedFilters.level.join(",");
-        console.log(levels)
         const response = await axios.get(`${process.env.REACT_APP_API}/cards`, {
           params: {
             name: searchTerm,
@@ -67,20 +74,21 @@ export default function LandingPage() {
             defMax: selectedFilters.defMax,
             atkMin: selectedFilters.atkMin,
             atkMax: selectedFilters.atkMax,
+            race: selectedFilters.race,
             level: levels,
             offset: offset,
             limit: limit,
+            sort: selectedFilters.sort,
 
           },
 
         });
-
-
         setSearchResults(response.data);
         setOffset(limit);
       } catch (error) {
         console.error(error);
       }
+      setLoading(false);
     }, 1000);
 
     return () => clearTimeout(delayDebounceFn);
@@ -98,15 +106,46 @@ export default function LandingPage() {
 
   const handleLoadMore = async () => {
     try {
+      const levels = selectedFilters.level.join(",");
+      setLoading(true)
       const response = await axios.get(`${process.env.REACT_APP_API}/cards`, {
         params: {
           name: searchTerm,
+          frameType: selectedFilters.frameType,
+          type: selectedFilters.type,
+          attribute: selectedFilters.attribute,
+          defMin: selectedFilters.defMin,
+          defMax: selectedFilters.defMax,
+          atkMin: selectedFilters.atkMin,
+          atkMax: selectedFilters.atkMax,
+          race: selectedFilters.race,
+          level: levels,
           offset: offset,
           limit: limit,
+
         },
       });
       setSearchResults((prevResults) => [...prevResults, ...response.data]);
       setOffset((prevOffset) => prevOffset + limit);
+      setLoading(false)
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const handleRandom = async () => {
+    try {
+      setSearchResults([]);
+      setLoading(true);
+
+      const response = await axios.get(`${process.env.REACT_APP_API}/cards`, {
+        params: {
+          ran: limit,
+        },
+      });
+
+      setSearchResults(response.data);
+      setOffset(limit);
+      setLoading(false);
     } catch (error) {
       console.error(error);
     }
@@ -210,9 +249,13 @@ export default function LandingPage() {
     }
 
     setSelectedFilters(updatedFilters);
-    console.log(updatedFilters); // Log the updated filter values
+    // console.log(updatedFilters); // Log the updated filter values
   };
 
+  const navigateToAnotherPage = (id) => {
+    const destinationRoute = `/cards/${id}`;
+    navigate(destinationRoute);
+  };
   return (
     <div>
       <Navbar />
@@ -231,9 +274,10 @@ export default function LandingPage() {
               value={searchTerm}
               onChange={handleInputChange}
             />
-            {/* <button className="btn btn-outline-primary" type="button" onClick={handleSearch}>
-              <i className="bi bi-search"></i>
-            </button> */}
+
+            <button className="btn btn-outline-primary" type="button" onClick={handleRandom}>
+              Random
+            </button>
           </div>
 
           <div className="d-flex justify-content-center fs-2 mt-2">
@@ -245,8 +289,9 @@ export default function LandingPage() {
                 <i className="bi bi-funnel-fill"></i> Filter
               </button>
               <button type="button" className="btn btn-outline-primary" onClick={resetFilters}>
-              <i class="bi bi-arrow-clockwise"></i>
+                <i className="bi bi-arrow-clockwise"></i>
               </button>
+
             </div>
             <select className="form-select ms-2 w-25" aria-label="Default select example" value={limit} onChange={(e) => setLimit(Number(e.target.value))}>
               <option value={5}>Load 5</option>
@@ -371,47 +416,59 @@ export default function LandingPage() {
 
         </div>
 
-        {searchResults.length === 0 && (
-          <div className="h4 d-flex justify-content-center m-4">Card not found!</div>
+        {loading && (
+          <div className="d-flex justify-content-center mt-3">
+            <div className="spinner-border text-primary" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </div>
+          </div>
+        )}
+
+        {!loading && searchResults.length === 0 && (
+          <div className="h4 d-flex justify-content-center m-4">No cards found!</div>
         )}
         {viewMode === "table" && (
           <div className="container m-2 p-2 hov cardlist ">
-            {searchResults.map((result) => (
-              <div className="card mb-3 p-1" key={result.id}>
-                <div className="row g-0">
-                  <div className="col-md-4 col-12 w-auto fcol">
-                    <img
-                      src={`${process.env.REACT_APP_CARD_IMG_SMALL_API}/${result.id}.jpg`}
-                      className="img-fluid rounded-start mt-1"
-                      alt={result.name}
-                    />
-                  </div>
-                  <div className="col-md-10 col-12">
-                    <div className="card-body">
-                      <h5 className="card-title fw-bold ">{result.name}</h5>
-                      <hr className="border-1 border-top border-primary"></hr>
-                      <div className="">
-                        [{result.type}]&nbsp;&nbsp;[{result.race}]&nbsp;&nbsp;
-                        {(result.atk !== null && result.atk !== undefined) && (
-                          <span>
-                            <i className="fa-solid fa-hand-fist"></i>
-                            {result.atk}&nbsp;&nbsp;
-                          </span>
-                        )}
-                        {(result.def !== null && result.def !== undefined) && (
-                          <span>
-                            <i className="fa-solid fa-shield"></i>
-                            {result.def}
-                          </span>
-                        )}
-                      </div>
-                      <hr className="border-1 border-top border-primary"></hr>
 
-                      <p className="card-text">{result.desc}</p>
+            {searchResults.map((result) => (
+              <a onClick={() => navigateToAnotherPage(result._id)}>
+                <div className="card mb-3 p-1" key={result.id}>
+                  <div className="row g-0">
+                    <div className="col-md-4 col-12 w-auto fcol">
+                      <img
+                        src={`${process.env.REACT_APP_CARD_IMG_SMALL_API}/${result.id}.jpg`}
+                        className="img-fluid rounded-start mt-1"
+                        alt={result.name}
+                      />
+                    </div>
+                    <div className="col-md-10 col-12">
+
+                      <div className="card-body">
+                        <h5 className="card-title fw-bold ">{result.name}</h5>
+                        <hr className="border-1 border-top border-primary"></hr>
+                        <div className="">
+                          [{result.type}]&nbsp;&nbsp;[{result.race}]&nbsp;&nbsp;
+                          {(result.atk !== null && result.atk !== undefined) && (
+                            <span>
+                              <i className="fa-solid fa-hand-fist"></i>
+                              {result.atk}&nbsp;&nbsp;
+                            </span>
+                          )}
+                          {(result.def !== null && result.def !== undefined) && (
+                            <span>
+                              <i className="fa-solid fa-shield"></i>
+                              {result.def}
+                            </span>
+                          )}
+                        </div>
+                        <hr className="border-1 border-top border-primary"></hr>
+
+                        <p className="card-text">{result.desc}</p>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              </a>
             ))}
 
 

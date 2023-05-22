@@ -17,8 +17,3 @@ export const customStyles = {
   };
 
 
-
- export function valueLabelFormat(value) {
-    value *=100
-    return `${value}`;
-  }

@@ -1,0 +1,34 @@
+.cardImg {
+  transition: transform 0.3s ease;
+  width: 75%;
+}
+
+.cardImg:hover {
+  transform: scale(1.4);
+}
+
+.cardinfo{
+    text-align: left;
+    padding: 0.5em;
+    display: block;
+}
+
+.sub-info{
+  font-size: 1.1rem;
+}
+
+@media (max-width: 800px) {
+  .cardImg {
+    transition: transform 0.3s ease;
+    width: 70%;
+  }
+  
+  .cardImg:hover {
+    transform: scale(1);
+  }
+  
+  .fcol {
+    margin-left: auto;
+    margin-right: auto;
+  }
+}

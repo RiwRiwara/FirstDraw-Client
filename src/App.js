@@ -10,10 +10,15 @@ import MyProfile from "./pages/Profile/MyProfile";
 import PrivateRoute from "./utils/PrivateRoutes";
 import React from 'react';
 import News from "./pages/NewsPage/NewsPage";
+import CardDetail from "./pages/CardDetailPage/CardDetail";
+import MyCollection from "./pages/MyCollection/MyColellection";
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { theme } from "./utils/customMUI";
 
 const MyRoute = () => {
   return (
     <div>
+      <ThemeProvider theme={theme} >
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<LandingPage />} />
@@ -22,7 +27,12 @@ const MyRoute = () => {
           <Route path="/blogs" element={<Blogs />} />
           <Route path="/news" element={<News />} />
           <Route path="/blogs/:slug" element={<SingleComponent />} />
+          <Route path="/cards/:slug" element={<CardDetail/>} />
+          <Route path="/cards" element={<LandingPage />} />
 
+          <Route path="/collections" element={<MyCollection />} />
+
+          
           <Route exact path='/' element={<PrivateRoute />}>
             <Route path="/profile" element={<MyProfile />} />
             <Route path="/create" element={<FromComponent />} />
@@ -30,6 +40,7 @@ const MyRoute = () => {
 
         </Routes>
       </BrowserRouter>
+      </ThemeProvider>
       <Footer />
     </div>
   );

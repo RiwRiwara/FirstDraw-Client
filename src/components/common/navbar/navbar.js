@@ -1,19 +1,27 @@
 import React from "react";
+import { useNavigate } from 'react-router-dom';
 import logo from "./logo.svg";
 import "./navbar.css";
 import { useLogout } from '../../../hooks/useLogout'
 import { useAuthContext } from "../../../hooks/useAuthContext";
 
 function Navbar() {
-  const { logout } = useLogout()
-  const { user } = useAuthContext()
+  const navigate = useNavigate();
+  const { logout } = useLogout();
+  const { user } = useAuthContext();
   const isAdmin = user && user.data && user.data.isAdmin;
 
   const clickLogout = () => {
-    logout()
-  }
+    logout();
+    handleNavigation("/login")
+  };
+
+  const handleNavigation = (path) => {
+    navigate(path);
+  };
+
   return (
-    <div >
+    <div>
       <nav className="navbar navbar-expand-lg">
         <div className="container-fluid shadow-sm ">
           <a className="navbar-brand " href="/">
@@ -27,6 +35,7 @@ function Navbar() {
             aria-controls="myNavbar"
             aria-expanded="false"
             aria-label="Toggle navigation"
+
           >
             <span className="navbar-toggler-icon "></span>
           </button>
@@ -35,7 +44,7 @@ function Navbar() {
               <li className="nav-item dropdown ">
                 <a
                   className="nav-link dropdown-toggle text-primary"
-                  href="/"
+                  onClick={() => handleNavigation("/")}
                   id="navbarDropdown"
                   role="button"
                   data-bs-toggle="dropdown"
@@ -106,49 +115,56 @@ function Navbar() {
               </li>
               {user && (
                 <li className="nav-item ">
-                  <a className="nav-link text-primary" href="/profile">
+                  <a className="nav-link text-primary"
+                    onClick={() => handleNavigation("/profile")}
+                    style={{ cursor: "pointer" }}
+                  >
                     Profile
                   </a>
                 </li>
               )}
               {user && (
                 <li className="nav-item">
-                  <a className="nav-link text-primary" href="/">
+                  <a className="nav-link text-primary"
+                    onClick={() => handleNavigation("/collections")}
+                    style={{ cursor: "pointer" }}
+                  >
                     My Collections
                   </a>
                 </li>
               )}
               {user && (
                 <li className="nav-item">
-                  <a className="nav-link text-primary" href="/">
+                  <a className="nav-link text-primary"
+                    onClick={() => handleNavigation("/")}
+                    style={{ cursor: "pointer" }}
+                  >
                     Request
                   </a>
                 </li>
               )}
-
-
             </ul>
             <ul className="navbar-nav ">
               <li className="nav-item">
-
                 {user ? (
-                  <a onClick={clickLogout} class="nav-link text-primary btn btn-link"><i class="bi bi-box-arrow-right"></i>Logout</a>
+                  <a onClick={clickLogout} className="nav-link text-primary btn btn-link">
+                    <i className="bi bi-box-arrow-right"></i> Logout
+                  </a>
                 ) : (
-                  <a className="nav-link text-primary" href="/login">
+                  <a className="nav-link text-primary"
+                  onClick={() => handleNavigation("/login")}
+                  style={{ cursor: "pointer" }}
+                  >
                     <i className="bi bi-box-arrow-in-right "></i> Login
                   </a>
                 )}
-
               </li>
             </ul>
           </div>
         </div>
       </nav>
     </div>
-
-
-
   );
 }
 
-export default Navbar
+export default Navbar;

@@ -14,7 +14,7 @@ function PublicProfile(props) {
                 <p>This is people can see you profile. </p>
                 <hr class="bg-danger border-4 border-top border-primary"></hr>
                 <div className='row mb-3'>
-                    <div className="col-12 col-md-4">
+                    <div className="col-12 col-md-4 justify-content-center d-flex">
                         <img
                             src={selectedImage}
                             className="rounded-top  profileimg"
@@ -24,7 +24,7 @@ function PublicProfile(props) {
                     </div>
                     <div className="col-12 col-md-8">
                     <div className='d-flex justify-content-center'>
-                        <h4 className='fw-bold'>{displayname}</h4>
+                        <h4 className='fw-bold m-2'>{displayname}</h4>
                     </div>
                         <div className='row'>
                             <textarea

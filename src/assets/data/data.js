@@ -9,6 +9,11 @@ export const levelOptions = [
     { value: 8, label: 'Level 8' },
     { value: 9, label: 'Level 9' },
     { value: 10, label: 'Level 10' },
+    { value: 11, label: 'Level 11' },
+    { value: 12, label: 'Level 12' },
+    { value: 13, label: 'Level 13' },
+    { value: 14, label: 'Level 14' },
+    { value: 15, label: 'Level 15' },
   ];
 
   export const typeOptions = [

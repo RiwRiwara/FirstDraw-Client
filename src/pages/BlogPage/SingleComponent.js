@@ -10,8 +10,8 @@ import { useAuthContext } from "../../hooks/useAuthContext";
 
 const SingleComponent = () => {
   const { user } = useAuthContext()
-  const isAdmin = user && user.data && user.data.isAdmin;
   const { slug } = useParams();
+  const isAdmin = user && user.data && user.data.isAdmin;
   const [blog, setBlog] = useState("");
   const [editMode, setEditMode] = useState(false);
   const navigate = useNavigate();
