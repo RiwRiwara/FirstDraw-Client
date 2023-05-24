@@ -4,6 +4,11 @@ import logo from "./logo.svg";
 import "./navbar.css";
 import { useLogout } from '../../../hooks/useLogout'
 import { useAuthContext } from "../../../hooks/useAuthContext";
+import {Box, Avatar, Menu, MenuItem, ListItem,
+Typography, Tooltip} from '@mui/material';
+import PersonAdd from '@mui/icons-material/PersonAdd';
+import Settings from '@mui/icons-material/Settings';
+import Logout from '@mui/icons-material/Logout';
 
 function Navbar() {
   const navigate = useNavigate();
@@ -144,7 +149,9 @@ function Navbar() {
                 </li>
               )}
             </ul>
+
             <ul className="navbar-nav ">
+
               <li className="nav-item">
                 {user ? (
                   <a onClick={clickLogout} className="nav-link text-primary btn btn-link">
@@ -160,6 +167,7 @@ function Navbar() {
                 )}
               </li>
             </ul>
+
           </div>
         </div>
       </nav>

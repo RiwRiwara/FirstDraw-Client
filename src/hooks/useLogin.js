@@ -1,11 +1,13 @@
 import React, { useState } from 'react'
 import { useAuthContext } from './useAuthContext'
 import axios from "axios";
+import { Link, useNavigate } from 'react-router-dom'
 import Swal from "sweetalert2";
 
 export const useLogin = () => {
+    const navigate = useNavigate();
     const [error, setError] = useState(null)
-    const [isLoading, setIsLoading] = useState(null)
+    const [isLoading, setIsLoading] = useState(false)
     const {dispatch} = useAuthContext()
 
     const login = async (email, password) => {
@@ -19,14 +21,18 @@ export const useLogin = () => {
                 localStorage.setItem('token', response.data.token);
 
                 dispatch({type:'LOGIN', payload:response})
+                
                 setIsLoading(false)
-
-                Swal.fire("Notification", "Login Successful", "success");
+                Swal.fire('Notification', 'Login Successful', 'success').then(() => {
+                    navigate('/');
+                });
             })
             .catch((err) => {
-                Swal.fire("Notification", err.response, "error");
                 setIsLoading(false)
-                setError(err)
+                setError(err.response.data.error)
+                Swal.fire("Notification", err.response.data.error, "error");
+
+
             });
     };
 

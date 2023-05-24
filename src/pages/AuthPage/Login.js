@@ -3,6 +3,9 @@ import Navbar from '../../components/common/navbar/navbar'
 import "./style.css"
 import { Link, useNavigate } from 'react-router-dom'
 import { useLogin } from '../../hooks/useLogin'
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
+import Button from '@mui/material/Button';
 
 
 function Login() {
@@ -10,25 +13,29 @@ function Login() {
 
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
-    const {login, error, isLoading} = useLogin()
+    const { login, isLoading, error } = useLogin()
 
     const submitForm = async (e) => {
+        await login(email, password);
         e.preventDefault()
-        await login(email, password)
-        navigate('/', { replace: true });
     }
 
     const adminLogin = async () => {
-        await login('Havedist@gmail.com','ssdsdA**A56Sf')
-        navigate('/', { replace: true });
-    }
+        await login('Havedist@gmail.com', 'ssdsdA**A56Sf');
+    };
+
     const userLogin = async () => {
-        await login('logout@gmail.com','.Awirut3526294')
-        navigate('/', { replace: true });
+        await login('test6@gmail.com', '.Awirut3526293')
     }
 
     return (
         <div>
+            <Backdrop
+                sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={isLoading}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
             <Navbar />
             <div class="divform p-3">
                 <form onSubmit={submitForm}>
@@ -52,10 +59,10 @@ function Login() {
                             <input
                                 type="password"
                                 class="form-control"
-                                placeholder="Password" 
+                                placeholder="Password"
                                 onChange={(e) => setPassword(e.target.value)}
-                                value ={password}
-                                />
+                                value={password}
+                            />
                         </div>
                     </div>
                     <div class="mb-3 form-check">
@@ -67,7 +74,7 @@ function Login() {
                     </div>
                     <button type="submit" class="btn btn-primary w-100">Login</button>
                     <a type='button' className='btn' onClick={adminLogin}>admin</a>
-                    <a  type='button' className='btn' onClick={userLogin}>user</a>
+                    <a type='button' className='btn' onClick={userLogin}>user</a>
                 </form>
                 <div class="text-center mt-3">Don’t have an account?<Link to="/regsiter">Register</Link></div>
             </div>

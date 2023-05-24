@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from '../../components/common/navbar/navbar';
 import "./style.css";
-import { useAuthContext } from '../../hooks/useAuthContext';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import Typography from '@mui/material/Typography';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
@@ -12,11 +11,15 @@ import * as custom from "./customComponent";
 import Grid from '@mui/material/Unstable_Grid2';
 import FullScreenDialog from './addCollection';
 
-function CardDetail() {
+function CardDetail(probs) {
+
     const navigate = useNavigate();
-    const { user } = useAuthContext()
     const { slug } = useParams();
     const [card, setCard] = useState(null);
+
+       // Get the props from the previous page
+       const location = useLocation();
+       const previousPageProps = location.state;
 
     useEffect(() => {
         const fetchCardBySlug = async () => {
@@ -29,6 +32,7 @@ function CardDetail() {
         };
 
         fetchCardBySlug();
+ 
     }, [slug]);
 
     return (
@@ -38,7 +42,9 @@ function CardDetail() {
                 {card ? (
                     <div >
                         <Breadcrumbs aria-label="breadcrumb">
-                            <Link underline="hover" color="inherit" onClick={() => { navigate(-1); }}>
+                            <Link underline="hover"
+                                style={{ cursor: 'pointer' }}
+                                color="inherit" onClick={() => { navigate(-1); }}>
                                 Back
                             </Link>
                             <Typography color="text.primary">{card.name}</Typography>
@@ -88,20 +94,20 @@ function CardDetail() {
                                                 </Grid>
                                             )}
                                             {card.atk && (
-                                            <Grid xs={2} sm={4} md={4} key={5}>
-                                                <custom.Item className='item-info bg-primary '>
-                                                    <p className='text-white'>Attack</p>
-                                                    <span className='fw-bold sub-info text-white'>{card.atk}</span>
-                                                </custom.Item>
-                                            </Grid>
+                                                <Grid xs={2} sm={4} md={4} key={5}>
+                                                    <custom.Item className='item-info bg-primary '>
+                                                        <p className='text-white'>Attack</p>
+                                                        <span className='fw-bold sub-info text-white'>{card.atk}</span>
+                                                    </custom.Item>
+                                                </Grid>
                                             )}
                                             {card.def && (
-                                            <Grid xs={2} sm={4} md={4} key={6}>
-                                                <custom.Item className='item-info bg-primary '>
-                                                    <p className='text-white'>Defense</p>
-                                                    <span className='fw-bold sub-info text-white'>{card.def}</span>
-                                                </custom.Item>
-                                            </Grid>
+                                                <Grid xs={2} sm={4} md={4} key={6}>
+                                                    <custom.Item className='item-info bg-primary '>
+                                                        <p className='text-white'>Defense</p>
+                                                        <span className='fw-bold sub-info text-white'>{card.def}</span>
+                                                    </custom.Item>
+                                                </Grid>
                                             )}
                                         </Grid>
                                     </Box>
@@ -114,7 +120,7 @@ function CardDetail() {
                                             {card.desc}
                                         </Typography>
                                     </Box>
-                                   
+
                                     <FullScreenDialog
                                         card={card}
                                     />

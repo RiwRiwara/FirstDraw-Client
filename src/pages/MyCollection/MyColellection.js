@@ -10,7 +10,6 @@ import Tab1Component from "./cardTab";
 import Tab2Component from "./deckTab";
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
-
 const MyCollection = () => {
   const [value, setValue] = React.useState('one');
   const navigate = useNavigate();
@@ -72,13 +71,12 @@ const MyCollection = () => {
               classNames="fade"
             >
               <div>
-                {value === 'one' && <Tab1Component id={currentUser._id} />}
+                {value === 'one' && currentUser && <Tab1Component id={currentUser._id} />}
                 {value === 'two' && <Tab2Component />}
               </div>
             </CSSTransition>
           </TransitionGroup>
         </div>
-
       </div>
     </>
   );

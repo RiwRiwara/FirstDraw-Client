@@ -12,6 +12,15 @@
   transform: scale(1);
 }
 
+.tableimg:hover {
+  transform: scale(1.1);
+}
+.tableimg {
+  transition: transform 0.3s ease;
+}
+
+
+
 
 .btn-outline-primary:hover .bi {
   color: white;
