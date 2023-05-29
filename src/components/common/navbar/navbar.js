@@ -4,11 +4,7 @@ import logo from "./logo.svg";
 import "./navbar.css";
 import { useLogout } from '../../../hooks/useLogout'
 import { useAuthContext } from "../../../hooks/useAuthContext";
-import {Box, Avatar, Menu, MenuItem, ListItem,
-Typography, Tooltip} from '@mui/material';
-import PersonAdd from '@mui/icons-material/PersonAdd';
-import Settings from '@mui/icons-material/Settings';
-import Logout from '@mui/icons-material/Logout';
+
 
 function Navbar() {
   const navigate = useNavigate();
@@ -29,7 +25,7 @@ function Navbar() {
     <div>
       <nav className="navbar navbar-expand-lg">
         <div className="container-fluid shadow-sm ">
-          <a className="navbar-brand " href="/">
+          <a className="navbar-brand " onClick={() => handleNavigation("/")}>
             <img src={logo} className="logo" alt="logo" />
           </a>
           <button
@@ -49,7 +45,6 @@ function Navbar() {
               <li className="nav-item dropdown ">
                 <a
                   className="nav-link dropdown-toggle text-primary"
-                  onClick={() => handleNavigation("/")}
                   id="navbarDropdown"
                   role="button"
                   data-bs-toggle="dropdown"
@@ -59,17 +54,17 @@ function Navbar() {
                 </a>
                 <ul className="dropdown-menu " aria-labelledby="navbarDropdown">
                   <li>
-                    <a className="dropdown-item" href="/">
+                    <a className="dropdown-item" onClick={() => handleNavigation("/")} >
                       Search
                     </a>
                   </li>
                   <li>
-                    <a className="dropdown-item " href="/blogs">
+                    <a className="dropdown-item " onClick={() => handleNavigation("/blogs")}>
                       Blog
                     </a>
                   </li>
                   <li>
-                    <a className="dropdown-item " href="/news">
+                    <a className="dropdown-item " onClick={() => handleNavigation("/news")}>
                       News
                     </a>
                   </li>
@@ -81,7 +76,6 @@ function Navbar() {
                 {isAdmin && (
                   <a
                     className="nav-link dropdown-toggle text-primary"
-                    href="/"
                     id="navbarDropdown"
                     role="button"
                     data-bs-toggle="dropdown"
@@ -92,27 +86,27 @@ function Navbar() {
                 )}
                 <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
                   <li>
-                    <a className="dropdown-item " href="/">
+                    <a className="dropdown-item " onClick={() => handleNavigation("/admin/request")} style={{cursor:"pointer"}}>
                       User Request
                     </a>
                   </li>
                   <li>
-                    <a className="dropdown-item " href="/">
+                    <a className="dropdown-item " onClick={() => handleNavigation("/admin/card")} style={{cursor:"pointer"}}>  
                       Card Manager
                     </a>
                   </li>
                   <li>
-                    <a className="dropdown-item " href="/">
+                    <a className="dropdown-item " onClick={() => handleNavigation("/admin/deck")} style={{cursor:"pointer"}}>
                       Deck Manager
                     </a>
                   </li>
                   <li>
-                    <a className="dropdown-item " href="/">
+                    <a className="dropdown-item " onClick={() => handleNavigation("/admin/user")} style={{cursor:"pointer"}}>
                       User Manager
                     </a>
                   </li>
                   <li>
-                    <a className="dropdown-item " href="/news">
+                    <a className="dropdown-item " onClick={() => handleNavigation("/news")} style={{cursor:"pointer"}}>
                       News
                     </a>
                   </li>

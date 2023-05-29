@@ -1,13 +1,10 @@
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useState, useEffect } from "react";
-import "./style.css"
+import "./Adminstyle.css"
 import Navbar from "../../components/common/navbar/navbar";
-import { useAuthContext } from "../../hooks/useAuthContext";
 
-const AdminPage = () => {
-  const { user } = useAuthContext()
-  const isAdmin = user && user.data && user.data.isAdmin;
+const DeckManager = () => {
   const navigate = useNavigate();
 
   return (
@@ -21,4 +18,4 @@ const AdminPage = () => {
   );
 };
 
-export default AdminPage;
+export default DeckManager;

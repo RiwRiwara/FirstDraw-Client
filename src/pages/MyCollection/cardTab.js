@@ -2,19 +2,33 @@ import {
     Typography, Tabs, Tab, Box, Skeleton, Grid
     , Paper, styled, Button, Card, CardContent, IconButton, Tooltip, Zoom
 } from '@mui/material';
+
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { DeleteOutline } from '@mui/icons-material';
 import "./style.css"
+import Swal from "sweetalert2";
+import carddummysm from "../../assets/images/dummycardsmall.jpg";
 
 function Tab1Component(props) {
+    // Dialog
     let userID = props.id
+    const [open, setOpen] = useState(false);
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    // Intialzie var
     const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState("");
     const [limit, setLimit] = useState(5)
     const [offset, setOffset] = useState(0)
-    const [toggle, setToggle] = useState(true)
+    const [callEffect, setToggle] = useState(true)
     const [collectionId, setCId] = useState()
     const [viewMode, setViewMode] = useState('table');
     const [subViewList, setSubViewLsit] = useState('+');
@@ -38,21 +52,19 @@ function Tab1Component(props) {
         setLoading(true);
         const fetchCollection = async () => {
             try {
-                const collectionResponse = await axios.get(`${process.env.REACT_APP_API}/collections`, {
-                    params: {
-                        userId: userID,
-                        type: "card"
-                    }
-                });
+                const collectionResponse = await axios.get(`${process.env.REACT_APP_API}/collections/?userId=${userID}&type=card`)
+
+                if (!collectionResponse.data[0]) {
+                    return; // End the function execution if data[0] is null or undefined
+                }
 
                 const itemIds = collectionResponse.data[0].itemIds;
-                setCId(collectionResponse.data[0]._id)
+                setCId(collectionResponse.data[0]._id);
                 const cardResponses = await Promise.all(
                     itemIds.map(itemId => axios.get(`${process.env.REACT_APP_API}/cards/?id=${itemId}`))
                 );
 
-                const searchResults = cardResponses.map(response => response.data[0]);
-
+                const searchResults = cardResponses.map(response => response.data[0]).filter(result => result !== undefined);
                 setSearchResults(searchResults);
                 setOffset(limit);
             } catch (error) {
@@ -63,12 +75,12 @@ function Tab1Component(props) {
         };
 
         fetchCollection();
-    }, [props, toggle]);
+    }, [props, callEffect]);
 
     useEffect(() => {
         if (searchTerm === "") {
             setSearchResults([])
-            setToggle(!toggle)
+            setToggle(!callEffect)
         } else {
             const filteredResults = searchResults.filter((result) =>
                 result.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -78,17 +90,34 @@ function Tab1Component(props) {
     }, [searchTerm]);
 
     const deleteItemFromCollection = async (itemId) => {
-        try {
-            const response = await axios.put(`${process.env.REACT_APP_API}/collections/${collectionId}`, {
-                removeItems: [itemId],
-            });
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    const response = await axios.put(`${process.env.REACT_APP_API}/collections/${collectionId}`, {
+                        removeItems: [itemId],
+                    });
 
-            console.log(response.data); 
-            setToggle(!toggle)
+                    console.log(response.data);
+                    setToggle(!callEffect)
 
-        } catch (error) {
-            console.error(error);
-        }
+                } catch (error) {
+                    console.error(error);
+                }
+                Swal.fire(
+                    'Deleted!',
+                    'Your file has been deleted.',
+                    'success'
+                )
+            }
+        })
     };
 
     const handleViewToggle = () => {
@@ -115,10 +144,15 @@ function Tab1Component(props) {
                                 <a
                                     onClick={() => navigateToAnotherPage(`/cards/${result._id}`)}
                                     style={{ cursor: 'zoom-in' }}>
+
                                     <img
                                         src={`${process.env.REACT_APP_CARD_IMG_SMALL_API}/${result.id}.jpg`}
-                                        alt={result.name}
                                         className="img-fluid"
+                                        alt={result.name}
+                                        onError={(e) => {
+                                            e.target.onerror = null;
+                                            e.target.src = carddummysm;
+                                        }}
                                     />
                                 </a>
                                 <Tooltip title="Remove from collection." TransitionComponent={Zoom} className='bg-primary'>
@@ -134,7 +168,7 @@ function Tab1Component(props) {
                                         }}
                                         onClick={(e) => {
                                             e.stopPropagation();
-                                            console.log(e);
+                                            deleteItemFromCollection(result._id)
                                         }}
                                     >
                                         <i class="bi bi-trash fw-bold" style={{ color: 'white', fontSize: '0.5em' }}></i>
@@ -208,7 +242,7 @@ function Tab1Component(props) {
 
                         </Grid>
                         <Grid item xs={12} md={9}>
-                            <div className="container">.</div>
+                            <div className="container"></div>
                         </Grid>
                     </Grid>
                 </Box>
@@ -252,6 +286,11 @@ function Tab1Component(props) {
                                                         src={`${process.env.REACT_APP_CARD_IMG_SMALL_API}/${result.id}.jpg`}
                                                         className="img-fluid rounded-start mt-1"
                                                         alt={result.name}
+                                                        style={{width:"10rem"}}
+                                                        onError={(e) => {
+                                                            e.target.onerror = null;
+                                                            e.target.src = carddummysm;
+                                                        }}
                                                     />
                                                 </div>
                                                 <div className="col-md-10 col-12">
@@ -285,7 +324,7 @@ function Tab1Component(props) {
                                                         position: 'absolute',
                                                         top: { xs: '0rem', sm: '0.5rem' },
                                                         bottom: { xs: 'auto', sm: 'auto' },
-                                                        right: { xs: '0rem', sm: '0.5rem' },
+                                                        right: { xs: '0rem', sm: '3rem' },
                                                     }}
                                                     onClick={(e) => {
                                                         e.stopPropagation();
@@ -322,15 +361,20 @@ function Tab1Component(props) {
                                                         src={`${process.env.REACT_APP_CARD_IMG_SMALL_API}/${result.id}.jpg`}
                                                         className="img-fluid rounded-start mt-1"
                                                         alt={result.name}
-                                                        style={{ height: '80px' }}
+                                                        style={{width:"2rem"}}
+                                                        onError={(e) => {
+                                                            e.target.onerror = null;
+                                                            e.target.src = carddummysm;
+                                                        }}
                                                     />
+
                                                 </div>
                                             </div>
                                             <div className="col-md-8 col-12 w-100">
                                                 <CardContent sx={{ display: 'flex', justifyContent: 'space-between' }}>
 
                                                     <div className='container '>
-                                                        <div className='h5 fw-bold'>
+                                                        <div className='h5 fw-bold' style={{fontSize:"1rem"}}>
                                                             {result.name}
                                                         </div>
                                                         <p className='container' style={{ fontSize: "0.5rem" }}>
@@ -363,10 +407,11 @@ function Tab1Component(props) {
                                                     }}
                                                     onClick={(e) => {
                                                         e.stopPropagation();
-                                                        console.log(e);
+                                                        deleteItemFromCollection(result._id)
                                                     }}
                                                 >
                                                     <DeleteOutline />
+
                                                 </IconButton>
                                             </Tooltip>
                                         </Card>
@@ -396,10 +441,7 @@ function Tab1Component(props) {
                     </div>
                 )}
 
-
             </div>}
-
-
         </div>
     );
 };

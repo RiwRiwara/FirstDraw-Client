@@ -5,43 +5,29 @@ import {cardSize} from "../assets/data/metadata"
 Buffer.from('anything', 'base64');
 window.Buffer = window.Buffer || require("buffer").Buffer;
 
-const testAzureConnection = async (sasToken) => {
-  const blobServiceClient = new BlobServiceClient(`https://firstdraw.blob.core.windows.net${sasToken}`);
 
-
-  const containersIterator = blobServiceClient.listContainers();
-  for await (const container of containersIterator) {
-    console.log(`Container: ${container.name}`);
-  }
-};
-
-
-
-const uploadImageToAzure = async (file, meta, uid) => {
+const uploadImageToAzure = async (cardname, file, meta, containerName, w=cardSize[0].width, h=cardSize[0].height) => {
+  
   const base64Data = file.result.replace(/^data:image\/\w+;base64,/, "");
-
-  console.log(file)
-  console.log(meta)
-
+  
   const img = new Image();
   img.src = 'data:image/jpeg;base64,' + base64Data;
   await new Promise((resolve) => img.onload = resolve);
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
-  canvas.width = 200;
-  canvas.height = 200;
+  canvas.width = w;
+  canvas.height = h;
 
-  ctx.drawImage(img, 0, 0, 200, 200);
+  ctx.drawImage(img, 0, 0, w, h);
 
-  const resizedBase64Data = canvas.toDataURL('image/jpeg').replace(/^data:image\/\w+;base64,/, "");
+  const resizedBase64Data = canvas.toDataURL('image/jpg').replace(/^data:image\/\w+;base64,/, "");
   const resizedBuffer = Buffer.from(resizedBase64Data, 'base64');
 
   const blobServiceClient = new BlobServiceClient(`https://firstdraw.blob.core.windows.net${process.env.REACT_APP_AZURE_SASTOKEN}`);
 
-  const containerName = "userprofile";
   const containerClient = blobServiceClient.getContainerClient(containerName);
 
-  const blobName = `${uid}_profile.jpeg`;
+  const blobName = `${cardname}.jpg`;
   const blockBlobClient = containerClient.getBlockBlobClient(blobName);
 
   const options = {

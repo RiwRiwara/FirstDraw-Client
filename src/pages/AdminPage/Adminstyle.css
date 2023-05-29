@@ -1,0 +1,55 @@
+.cardImgAdmin {
+  transition: transform 0.3s ease;
+  width: 75%;
+}
+
+.cardImgAdmin:hover {
+  transform: scale(1.05);
+}
+
+.cardinfo{
+    text-align: left;
+    padding: 0.5em;
+    display: block;
+}
+
+.sub-info{
+  font-size: 1.1rem;
+}
+
+
+
+@media (max-width: 800px) {
+  .cardImg {
+    transition: transform 0.3s ease;
+    width: 70%;
+  }
+  
+  .cardImg:hover {
+    transform: scale(1);
+  }
+  
+  .fcol {
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+.backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(244, 241, 255, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px; 
+  z-index: 9999;
+}
+
+.centered-text {
+  font-size: 2rem;
+  font-weight: bold;
+}

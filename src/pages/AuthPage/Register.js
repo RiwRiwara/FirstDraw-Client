@@ -28,7 +28,7 @@ function Register() {
     return (
         <div>
             <Navbar />
-            <div className="divform p-3">
+            <div className="divform p-3 min-vh-100">
                 <form onSubmit={submitForm}>
                     <div className="h1 d-flex justify-content-center fw-bold">Register<i className="m-1 fw-bold bi bi-box-arrow-in-left"></i></div>
                     <p className='d-flex justify-content-center'>Membership to give special experience!</p>

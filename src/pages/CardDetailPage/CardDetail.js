@@ -10,30 +10,33 @@ import Box from '@mui/material/Box';
 import * as custom from "./customComponent";
 import Grid from '@mui/material/Unstable_Grid2';
 import FullScreenDialog from './addCollection';
+import carddummy from "../../assets/images/dummycard.jpg"
 
-function CardDetail(probs) {
+function CardDetail(props) {
 
     const navigate = useNavigate();
     const { slug } = useParams();
     const [card, setCard] = useState(null);
+    const [cardimg, setCardimg] = useState(carddummy)
 
-       // Get the props from the previous page
-       const location = useLocation();
-       const previousPageProps = location.state;
+    // Get the props from the previous page
+    const location = useLocation();
+    const previousPageProps = location.state;
 
     useEffect(() => {
         const fetchCardBySlug = async () => {
             try {
                 const response = await axios.get(`${process.env.REACT_APP_API}/cards?id=${slug}`);
                 setCard(response.data[0]);
+                console.log(response)
             } catch (error) {
                 console.error(error);
             }
         };
-
         fetchCardBySlug();
- 
     }, [slug]);
+
+
 
     return (
         <>
@@ -50,15 +53,19 @@ function CardDetail(probs) {
                             <Typography color="text.primary">{card.name}</Typography>
                         </Breadcrumbs>
 
-
-
                         <div className="row g-3 mt-4">
                             <div className='col-12 col-md-4 d-flex justify-content-center'>
                                 <img
                                     src={`https://firstdraw.blob.core.windows.net/cardimgs/${card.id}.jpg`}
                                     className="img-fluid rounded-start mt-1 cardImg"
                                     alt={card.name}
+                                    onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = carddummy; // Use the value of carddummy directly
+                                    }}
                                 />
+
+
                             </div>
                             <div className='col-12 col-md-8'>
                                 <h2 className='fw-bold d-flex justify-content-center '>{card.name}</h2>

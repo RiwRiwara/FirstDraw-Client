@@ -4,24 +4,29 @@ import Navbar from "../../components/common/navbar/navbar";
 import axios from "axios";
 import Select from 'react-select';
 import * as customStyles from "./customStyles";
-import { levelOptions, typeOptions, raceOptions, frameOptions, attributeOptions } from '../../assets/data/data';
+import {
+  levelOptions, typeOptions, raceOptions, frameOptions,
+  attributeOptions, sortOption
+} from '../../assets/data/data';
 import makeAnimated from 'react-select/animated';
 import { Typography, Skeleton, Box, Slider } from '@mui/material';
 import { useNavigate } from "react-router-dom";
-
+import carddummy from "../../assets/images/dummycard.jpg"
+import carddummysm from "../../assets/images/dummycardsmall.jpg"
 const animatedComponents = makeAnimated();
 const minDistance = 5;
 
 
 export default function LandingPage() {
   const navigate = useNavigate();
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState();
   const [limit, setLimit] = useState(5)
   const [offset, setOffset] = useState(0)
   const [viewMode, setViewMode] = useState('table');
   const [searchResults, setSearchResults] = useState([]);
   const [showFilter, setShowFilter] = useState(false);
   const [selectedFilters, setSelectedFilters] = useState({
+    name: "",
     type: "",
     race: "",
     frameType: "",
@@ -36,6 +41,7 @@ export default function LandingPage() {
   const [loading, setLoading] = useState(false);
   const resetFilters = () => {
     setSelectedFilters({
+      name: "",
       type: "",
       race: "",
       frameType: "",
@@ -49,7 +55,7 @@ export default function LandingPage() {
 
     });
 
-    setSearchTerm("");
+    setSearchTerm();
     setAtk([0, 100]);
     setDef([0, 100]);
 
@@ -60,6 +66,7 @@ export default function LandingPage() {
     const delayDebounceFn = setTimeout(async () => {
       try {
         setSearchResults([]);
+
 
 
         const levels = selectedFilters.level.join(",");
@@ -162,16 +169,22 @@ export default function LandingPage() {
         <tr key={i}>
           {rowResults.map((result, index) => (
             <td key={index} className="timg">
-                   <div className="image-container d-flex justify-content-center  tableimg" style={{ position: 'relative' }}>
+              <div className="image-container d-flex justify-content-center  tableimg" style={{ position: 'relative' }}>
                 <a
                   onClick={() => navigateToAnotherPage(result._id)}
                   style={{ cursor: 'zoom-in' }}
                 >
-                  <img
-                    src={`${process.env.REACT_APP_CARD_IMG_SMALL_API}/${result.id}.jpg`}
-                    alt={result.name}
-                    className="img-fluid"
-                  />
+                        <img
+                          src={`${process.env.REACT_APP_CARD_IMG_SMALL_API}/${result.id}.jpg`}
+                          className="img-fluid"
+                          alt={result.name}
+                          style={{width:"10rem"}}
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = carddummysm;
+                          }}
+                        />
+     
                 </a>
               </div>
             </td>
@@ -221,11 +234,10 @@ export default function LandingPage() {
   };
 
   const handleFilterChange = (selectedOption, actionMeta) => {
+
     const { value } = selectedOption;
     const name = actionMeta.name;
-
     let updatedFilters = { ...selectedFilters };
-
     switch (name) {
       case "type":
         updatedFilters = { ...updatedFilters, type: value };
@@ -238,6 +250,9 @@ export default function LandingPage() {
         break;
       case "attribute":
         updatedFilters = { ...updatedFilters, attribute: value };
+        break;
+      case "sortBy":
+        updatedFilters = { ...updatedFilters, sort: value };
         break;
       case "levels":
         const selectedValues = selectedOption.map(option => option.value);
@@ -383,6 +398,22 @@ export default function LandingPage() {
                     onChange={handleFilterChange}
                   />
                 </div>
+
+                <div className="col-12 col-md-2 sel">
+                  <Select
+                    className="basic-single"
+                    isSearchable={true}
+                    classNamePrefix="select"
+                    defaultValue={[sortOption[0]]}
+                    menuPortalTarget={document.body}
+                    name="sortBy"
+                    value={sortOption.filter(option => option.value === selectedFilters.sort)}
+                    options={sortOption}
+                    styles={customStyles.customStyles}
+                    onChange={handleFilterChange}
+                  />
+                </div>
+
                 <div className="row">
                   <div className="col-12 col-md-6 ">
                     <Typography variant="h6" gutterBottom>
@@ -456,11 +487,23 @@ export default function LandingPage() {
                   <div className="card mb-3 p-1" key={result.id}>
                     <div className="row g-0">
                       <div className="col-md-4 col-12 w-auto fcol">
-                        <img
+                        {/* <img
                           src={`${process.env.REACT_APP_CARD_IMG_SMALL_API}/${result.id}.jpg`}
                           className="img-fluid rounded-start mt-1"
                           alt={result.name}
                         />
+                         */}
+                        <img
+                          src={`${process.env.REACT_APP_CARD_IMG_SMALL_API}/${result.id}.jpg`}
+                          className="img-fluid rounded-start mt-1"
+                          alt={result.name}
+                          style={{width:"10rem"}}
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = carddummysm;
+                          }}
+                        />
+
                       </div>
                       <div className="col-md-10 col-12">
 

@@ -122,4 +122,11 @@ export const levelOptions = [
     { value: "WATER", label: "WATER" },
     { value: "WIND", label: "WIND" }
   ];
+
+
+  export const sortOption = [
+    { value: "az", label: "A-Z" },
+    { value: "za", label: "Z-A" },
+  ];
+  
   

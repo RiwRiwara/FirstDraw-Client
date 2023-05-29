@@ -14,6 +14,13 @@ import CardDetail from "./pages/CardDetailPage/CardDetail";
 import MyCollection from "./pages/MyCollection/MyColellection";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { theme } from "./utils/customMUI";
+import UserRequest from "./pages/AdminPage/UserRequest";
+import CardManager from "./pages/AdminPage/CardManager";
+import DeckManager from "./pages/AdminPage/DeckManager";
+import UserManager from "./pages/AdminPage/UserManager";
+
+import PrivateRouteAdmin from "./utils/PrivateRoutesAdmin";
+import Permission from "./pages/AdminPage/Permission";
 
 const MyRoute = () => {
   return (
@@ -31,11 +38,19 @@ const MyRoute = () => {
           <Route path="/cards" element={<LandingPage />} />
 
           <Route path="/collections" element={<MyCollection />} />
+          <Route path="/permission" element={<Permission />} />
 
           
           <Route exact path='/' element={<PrivateRoute />}>
             <Route path="/profile" element={<MyProfile />} />
             <Route path="/create" element={<FromComponent />} />
+          </Route>
+
+          <Route exact path='/' element={<PrivateRouteAdmin />}>
+            <Route path="/admin/request" element={<UserRequest />} />
+            <Route path="/admin/card" element={<CardManager />} />
+            <Route path="/admin/deck" element={<DeckManager />} />
+            <Route path="/admin/user" element={<UserManager />} />
           </Route>
 
         </Routes>

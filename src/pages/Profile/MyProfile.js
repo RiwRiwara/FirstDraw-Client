@@ -13,7 +13,7 @@ export default function MyProfile() {
   const user = JSON.parse(localStorage.getItem("user")).data;
   useEffect(() => {
     axios
-      .get(`${process.env.REACT_APP_API}/user/${user.user.email}`)
+      .get(`${process.env.REACT_APP_API}/user/?id=${user.user._id}`)
       .then((response) => {
         setDname(response.data.displayname);
         setBio(response.data.bio);
@@ -59,6 +59,7 @@ export default function MyProfile() {
       confirmButtonText: 'Yes, change it!'
     }).then((result) => {
       if (result.isConfirmed) {
+
         const name = e.target.getAttribute("name");
         if (name === "nBtn") {
           axios
@@ -103,6 +104,7 @@ export default function MyProfile() {
               Swal.fire("Incompleted!", "Data not updated", "error");
             });
         }
+
       } else {
         setBio(user.user.bio)
         setDname(user.user.displayname)
