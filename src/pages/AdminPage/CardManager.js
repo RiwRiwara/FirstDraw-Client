@@ -11,10 +11,10 @@ import {
 import makeAnimated from 'react-select/animated';
 import {
   Typography, Skeleton, Slider, Grid, Box, Link, Accordion, Alert, Zoom, Tooltip, IconButton,
-  AccordionDetails, AccordionSummary, Divider, TextField, Snackbar, ToggleButton, ToggleButtonGroup
+  AccordionDetails, AccordionSummary, Divider, TextField, Snackbar, ToggleButton, ToggleButtonGroup, AlertTitle
 } from '@mui/material';
-import { DeleteOutline } from '@mui/icons-material';
-import { useNavigate } from "react-router-dom";
+import { Co2Sharp, DeleteOutline, Refresh } from '@mui/icons-material';
+import { useNavigate, useLocation } from "react-router-dom";
 import Navbar from "../../components/common/navbar/navbar"
 import * as custom from "./customComponent";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -24,13 +24,14 @@ import uploadImageToAzure from "../../utils/UploadImageToAzure";
 import deleteImageToAzure from "../../utils/deleteImageFromAzure";
 import Swal from "sweetalert2";
 import { debounce } from "lodash";
-
+import PageTitle from "../../components/features/pageTitle";
+import carddummysm from "../../assets/images/dummycardsmall.jpg"
 
 const animatedComponents = makeAnimated();
 const minDistance = 5;
 
 
-export default function CardManager() {
+export default function CardManager(props) {
 
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
@@ -41,6 +42,7 @@ export default function CardManager() {
   const [showFilter, setShowFilter] = useState(false);
   const [ShowAlert, setShowAlert] = useState(false);
   const [selectedFilters, setSelectedFilters] = useState({
+    name: "",
     type: "",
     race: "",
     frameType: "",
@@ -50,12 +52,43 @@ export default function CardManager() {
     defMin: 0,
     atkMax: 10000,
     atkMin: 0,
-    sort: "az"
+    offset:0,
+    sort: "az",
   });
+
+  const { state } = useLocation();
+  useEffect(() => {
+    if (state && state.res && state.res.cardReq) {
+      let card = state.res.cardReq
+      let reqID = state.res._id
+      setCarddata(prevCardData => {
+        const newCardData = Object.keys(prevCardData).reduce((acc, currKey) => {
+          if (card.hasOwnProperty(currKey)) {
+            acc[currKey] = card[currKey];
+          } else {
+            acc[currKey] = prevCardData[currKey];
+          }
+
+          if (card.name) document.getElementById("formName").value = card.name
+          if (card.def) document.getElementById("formDef").value = card.def
+          if (card.atk) document.getElementById("formAtk").value = card.atk
+          if (card.desc) document.getElementById("formDesc").value = card.desc
+          setSelectedImage(`https://firstdraw.blob.core.windows.net/requestimg/${reqID}.jpg`)
+          setSearchTerm(card.name)
+          return acc;
+        }, {});
+
+        return newCardData;
+      });
+
+    }
+  }, []);
+
 
   const [loading, setLoading] = useState(false);
   const resetFilters = () => {
     setSelectedFilters({
+      name: "",
       type: "",
       race: "",
       frameType: "",
@@ -64,8 +97,9 @@ export default function CardManager() {
       defMax: 10000,
       defMin: 0,
       atkMax: 10000,
+      offset:0,
       atkMin: 0,
-      sort: "az"
+      sort: "az",
 
     });
 
@@ -88,7 +122,8 @@ export default function CardManager() {
     level: "",
     def: 0,
     atk: 0,
-    desc: ""
+    desc: "",
+    offset:0
   });
   const resetToDefault = () => {
     setCarddata({
@@ -100,7 +135,8 @@ export default function CardManager() {
       level: "",
       def: 0,
       atk: 0,
-      desc: ""
+      desc: "",
+      offset:0
     });
     document.getElementById("formName").value = ""
     document.getElementById("formDef").value = ""
@@ -164,7 +200,7 @@ export default function CardManager() {
         break;
       case "race":
         updatedCardData = { ...updatedCardData, race: value };
-        break;
+        // break;
       case "frameType":
         updatedCardData = { ...updatedCardData, frameType: value };
         break;
@@ -175,11 +211,9 @@ export default function CardManager() {
         updatedCardData = { ...updatedCardData, level: value };
         break;
       default:
-        console.log(selectedOption);
         break;
     }
     setCarddata(updatedCardData);
-    // console.log(updatedCardData)
   };
   const [validateText, setValidateText] = useState("err")
 
@@ -188,7 +222,6 @@ export default function CardManager() {
     if (Object.keys(errors).length === 0) {
       axios
         .post(`${process.env.REACT_APP_API}/cards/create`, cardData).then((res) => {
-          console.log(res.data.id)
 
           uploadImageToAzure(
             res.data.id,
@@ -198,6 +231,7 @@ export default function CardManager() {
             cardSize[1].width,
             cardSize[1].height
           )
+
           uploadImageToAzure(
             res.data.id,
             imgFile,
@@ -217,17 +251,17 @@ export default function CardManager() {
 
 
       setShowAlert(true);
-      console.log("Data is valid:", cardData);
     } else {
       setValidateText({ err: "invalid", txt: errors.err })
       setShowAlert(true);
-
       console.log("Validation errors:", errors);
+      return true
     }
   };
 
 
-
+  const [toggleValue, setToggleValue] = useState("createCard")
+  const [refresh, setRefresh] = useState(false)
   useEffect(() => {
     setLoading(true)
     const delayDebounceFn = setTimeout(async () => {
@@ -264,7 +298,7 @@ export default function CardManager() {
       setLoading(false);
     }, 1000);
     return () => clearTimeout(delayDebounceFn);
-  }, [searchTerm, selectedFilters]);
+  }, [searchTerm, selectedFilters, toggleValue, refresh]);
 
   const handleInputChange = (e) => {
     setSearchTerm(e.target.value);
@@ -292,6 +326,7 @@ export default function CardManager() {
           level: levels,
           offset: offset,
           limit: limit,
+          sort :selectedFilters.sort
 
         },
       });
@@ -323,6 +358,10 @@ export default function CardManager() {
                     src={`${process.env.REACT_APP_CARD_IMG_SMALL_API}/${result.id}.jpg`}
                     alt={result.name}
                     className="img-fluid"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = carddummysm;
+                    }}
                   />
                 </a>
               </div>
@@ -375,7 +414,7 @@ export default function CardManager() {
     const name = actionMeta.name;
 
     let updatedFilters = { ...selectedFilters };
-
+    setOffset(0);
     switch (name) {
       case "type":
         updatedFilters = { ...updatedFilters, type: value };
@@ -401,16 +440,10 @@ export default function CardManager() {
         }
         break;
       default:
-        console.log(selectedOption);
         break;
     }
 
     setSelectedFilters(updatedFilters);
-  };
-
-  const navigateToAnotherPage = (id) => {
-    const destinationRoute = `/cards/${id}`;
-    navigate(destinationRoute, { state: "search" });
   };
 
   const handleImageUpload = (event) => {
@@ -443,7 +476,6 @@ export default function CardManager() {
       if (result.isConfirmed) {
         try {
           const response = await axios.delete(`${process.env.REACT_APP_API}/cards/${itemId}`)
-          console.log(response.data);
           setSearchTerm("")
           deleteImageToAzure("cardimgs", `${itemId}.jpg`)
           deleteImageToAzure("cardimgsmall", `${itemId}.jpg`)
@@ -455,39 +487,92 @@ export default function CardManager() {
           'Your file has been deleted.',
           'success'
         )
+        setOffset(0)
+        setRefresh(!refresh)
       }
     })
   };
 
-  const [toggleValue, setToggleValue] = useState("createCard")
+
   const handleChangeToggle = () => {
     if (toggleValue === "createCard") {
       resetToDefault()
       setToggleValue("updateCard")
     } else {
-
+      setIsEdit(false)
+      setSelectedImage(carddummy)
+      resetToDefault()
       setToggleValue("createCard")
     }
   }
+
   const [isEdit, setIsEdit] = useState(false)
+
+  const onClickCard = (newCardData) => {
+    setToggleValue("updateCard")
+    setCarddata(newCardData);
+    document.getElementById("formName").value = newCardData.name
+    document.getElementById("formDef").value = newCardData.def
+    document.getElementById("formAtk").value = newCardData.atk
+    document.getElementById("formDesc").value = newCardData.desc
+    setSelectedImage(`${process.env.REACT_APP_CARD_IMG_API}/${newCardData.id}.jpg`)
+    setIsEdit(true);
+    window.scrollTo(0, 0);
+  }
+
+
+  const updateOnclick = () => {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "To update card!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Confirm'
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        axios.put(`${process.env.REACT_APP_API}/cards/${cardData._id}`, cardData).then((response) => {
+          Swal.fire(
+            'Complete',
+            `Card: ${cardData.name}`,
+            'success'
+          )
+          handleChangeToggle()
+        }).catch((err) => {
+          console.error('Error updating card:', err);
+          Swal.fire(
+            'Error',
+            'invalid update',
+            'error'
+          )
+        });
+
+      }
+    })
+
+  }
+  const CreatebyRequest = () => {
+    if(!handleFormSubmit()){
+      let res = {data:"APPROVE", id:state.res._id}
+      navigate("/admin/request", {state:{res}});
+    }
+    
+  }
 
   return (
     <div >
       <Navbar />
+      {(state && state.res && state.res.cardReq) ? (
+        <Alert severity="warning">
+          <AlertTitle>Warning</AlertTitle>
+          This action from request — <strong>check it out</strong>
+        </Alert>
+      ) : (<></>)}
 
       <div className="container mt-3 min-vh-100">
-        <h2 className="fw-bold ">Card Manager</h2>
-
+        <PageTitle title={!(state && state.res && state.res.cardReq) ? ("Card Manager") : ("Card Manager - By requested")} />
         <div >
-          <Breadcrumbs aria-label="breadcrumb">
-            <Link underline="hover"
-              style={{ cursor: 'pointer' }}
-              color="inherit" onClick={() => { navigate(-1); }}>
-              Back
-            </Link>
-            <Typography color="text.primary">Card manager</Typography>
-          </Breadcrumbs>
-
           <div className='container mt-3 mb-3'>
             <ToggleButtonGroup
               className="m-1 d-flex justify-content-center"
@@ -508,10 +593,11 @@ export default function CardManager() {
             <div style={{ position: 'relative' }}>
               {!isEdit && toggleValue === "updateCard" && (
                 <div className="backdrop" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                onClick={()=>{window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });}}>
+                  onClick={() => { window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }); }}>
                   <span className="centered-text">Please select Card</span>
                 </div>
               )}
+
               <div className="row g-3 mt-3">
                 <div className='col-12 col-md-4 d-flex justify-content-center'>
                   <div className="row d-flex justify-content-center">
@@ -519,7 +605,11 @@ export default function CardManager() {
                       src={selectedImage}
                       className="img-fluid rounded-start mt-1 cardImgAdmin "
                       alt={"Name"}
-                      style={{ "width": "75%" }}
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = carddummysm;
+                      }}
+                      style={{ "width": "75%", borderRadius: "1rem" }}
                     />
                     <input
                       className="form-control "
@@ -541,7 +631,7 @@ export default function CardManager() {
                             <p className="fw-bold">Card name</p>
                             <input
                               type="text"
-                              class="form-control"
+                              className="form-control"
                               name="name"
                               id="formName"
                               onChange={FormInputChange}
@@ -637,7 +727,7 @@ export default function CardManager() {
                         <Grid xs={2} sm={4} md={4} key={7}>
                           <custom.Item className='item-info '>
                             <p className="fw-bold">Attack</p>
-                            <input type="text" class="form-control"
+                            <input type="text" className="form-control"
                               name="atk"
                               id="formAtk"
                               onChange={FormInputChange}
@@ -648,7 +738,7 @@ export default function CardManager() {
                         <Grid xs={2} sm={4} md={4} key={8}>
                           <custom.Item className='item-info  '>
                             <p className="fw-bold">Defense</p>
-                            <input type="text" class="form-control"
+                            <input type="text" className="form-control"
                               name="def"
                               id="formDef"
                               onChange={FormInputChange}
@@ -676,23 +766,27 @@ export default function CardManager() {
 
                 </div>
               </div>
+
               {toggleValue === "createCard" ? (
                 <>
-                  <button type="button" class="btn btn-primary w-100" onClick={handleFormSubmit}>Create Card</button>
+                  {state && state.res && state.res.cardReq ? (
+                    <button type="button" className="btn btn-primary w-100 mt-4" onClick={CreatebyRequest}>Create for Requested</button>
+                  ) : (
+                    <button type="button" className="btn btn-primary w-100 mt-4" onClick={handleFormSubmit}>Create Card</button>
+                  )}
                 </>
               ) : (
                 <>
-                  <button type="button" class="btn btn-primary w-100" onClick={() => { console.log(999) }}>Update Card</button>
+                  <button type="button" className="btn btn-primary w-100 mt-4" onClick={updateOnclick}>Update Card</button>
                 </>
               )}
+
+
             </div>
-
           </div>
-
-
         </div>
 
-        <Accordion className="mb-2 mt-2">
+        <Accordion className="mb-2 mt-2" defaultExpanded={(state && state.res && state.res.cardReq.name) ? (true) : (false)}>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls="panel1a-content"
@@ -732,6 +826,7 @@ export default function CardManager() {
                   <option value={30}>Load 30</option>
                   <option value={50}>Load 50</option>
                 </select>
+
               </div>
               {showFilter && (
                 <form className={`container mt-3 p-2 filter bg-secondary rounded p-3 ${showFilter ? 'slide-in' : 'slide-out'}`}>
@@ -890,7 +985,7 @@ export default function CardManager() {
 
 
                     {searchResults.map((result) => (
-                      <a onClick={() => { console.log(55) }}>
+                      <a onClick={() => onClickCard(result)}>
 
                         <div className="card mb-3 p-1" key={result.id}>
                           <div className="row g-0">
@@ -899,6 +994,10 @@ export default function CardManager() {
                                 src={`${process.env.REACT_APP_CARD_IMG_SMALL_API}/${result.id}.jpg`}
                                 className="img-fluid rounded-start mt-1"
                                 alt={result.name}
+                                onError={(e) => {
+                                  e.target.onerror = null;
+                                  e.target.src = carddummysm;
+                                }}
                               />
                             </div>
                             <div className="col-md-10 col-12">

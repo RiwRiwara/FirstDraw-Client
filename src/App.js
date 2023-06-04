@@ -21,40 +21,48 @@ import UserManager from "./pages/AdminPage/UserManager";
 
 import PrivateRouteAdmin from "./utils/PrivateRoutesAdmin";
 import Permission from "./pages/AdminPage/Permission";
+import NoLogin from "./components/features/NoLogin";
+import Request from "./pages/Request/Request";
+import TemporaryDrawer from "./pages/Request/test";
 
 const MyRoute = () => {
   return (
     <div>
       <ThemeProvider theme={theme} >
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/regsiter" element={<Register />} />
-          <Route path="/blogs" element={<Blogs />} />
-          <Route path="/news" element={<News />} />
-          <Route path="/blogs/:slug" element={<SingleComponent />} />
-          <Route path="/cards/:slug" element={<CardDetail/>} />
-          <Route path="/cards" element={<LandingPage />} />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/regsiter" element={<Register />} />
+            <Route path="/blogs" element={<Blogs />} />
+            <Route path="/news" element={<News />} />
+            <Route path="/blogs/:slug" element={<SingleComponent />} />
+            <Route path="/cards" element={<LandingPage />} />
 
-          <Route path="/collections" element={<MyCollection />} />
-          <Route path="/permission" element={<Permission />} />
+            <Route path="/test" element={<TemporaryDrawer />} />
 
-          
-          <Route exact path='/' element={<PrivateRoute />}>
-            <Route path="/profile" element={<MyProfile />} />
-            <Route path="/create" element={<FromComponent />} />
-          </Route>
 
-          <Route exact path='/' element={<PrivateRouteAdmin />}>
-            <Route path="/admin/request" element={<UserRequest />} />
-            <Route path="/admin/card" element={<CardManager />} />
-            <Route path="/admin/deck" element={<DeckManager />} />
-            <Route path="/admin/user" element={<UserManager />} />
-          </Route>
+            <Route path="/permission" element={<Permission />} />
+            <Route path="/pleaselogin" element={<NoLogin />} />
 
-        </Routes>
-      </BrowserRouter>
+
+            <Route exact path='/' element={<PrivateRoute />}>
+              <Route path="/cards/:slug" element={<CardDetail />} />
+              <Route path="/collections" element={<MyCollection />} />
+              <Route path="/profile" element={<MyProfile />} />
+              <Route path="/create" element={<FromComponent />} />
+              <Route path="/request" element={<Request />} />
+            </Route>
+
+            <Route exact path='/' element={<PrivateRouteAdmin />}>
+              <Route path="/admin/request" element={<UserRequest />} />
+              <Route path="/admin/card" element={<CardManager />} />
+              <Route path="/admin/deck" element={<DeckManager />} />
+              <Route path="/admin/user" element={<UserManager />} />
+            </Route>
+
+          </Routes>
+        </BrowserRouter>
       </ThemeProvider>
       <Footer />
     </div>

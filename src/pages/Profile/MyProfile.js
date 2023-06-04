@@ -154,9 +154,8 @@ export default function MyProfile() {
   };
   return (
     <div>
-
       <Navbar />
-      <div className="rootBox pt-3 rounded-1">
+      <div className=" pt-3 rounded-1">
         <div className="container">
           <h1 className="d-flex justify-content-center fw-bold mb-3">
             My Profile &nbsp;<i className="m bi bi-person-vcard"></i>

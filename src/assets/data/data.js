@@ -127,6 +127,7 @@ export const levelOptions = [
   export const sortOption = [
     { value: "az", label: "A-Z" },
     { value: "za", label: "Z-A" },
+    { value: 1, label: "Old" },
+    { value: -1, label: "New" },
   ];
-  
   

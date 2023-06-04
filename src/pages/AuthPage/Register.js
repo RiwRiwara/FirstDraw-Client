@@ -21,7 +21,7 @@ function Register() {
             Swal.fire("Notification", "password does not match!", "error");
           }else{
               await signup(displayname, email, password)
-              navigate('/login', { replace: true });
+            //   navigate('/login', { replace: true });
           }
     }
 

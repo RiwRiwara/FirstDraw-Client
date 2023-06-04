@@ -36,7 +36,8 @@ export default function LandingPage() {
     defMin: 0,
     atkMax: 10000,
     atkMin: 0,
-    sort: "az"
+    offset:0,
+    sort: "az",
   });
   const [loading, setLoading] = useState(false);
   const resetFilters = () => {
@@ -50,8 +51,9 @@ export default function LandingPage() {
       defMax: 10000,
       defMin: 0,
       atkMax: 10000,
+      offset:0,
       atkMin: 0,
-      sort: "az"
+      sort: "az",
 
     });
 
@@ -128,6 +130,7 @@ export default function LandingPage() {
           level: levels,
           offset: offset,
           limit: limit,
+          sort: selectedFilters.sort,
 
         },
       });
@@ -178,7 +181,7 @@ export default function LandingPage() {
                           src={`${process.env.REACT_APP_CARD_IMG_SMALL_API}/${result.id}.jpg`}
                           className="img-fluid"
                           alt={result.name}
-                          style={{width:"10rem"}}
+                          style={{width:"10rem", borderRadius:"5px"}}
                           onError={(e) => {
                             e.target.onerror = null;
                             e.target.src = carddummysm;
@@ -238,7 +241,10 @@ export default function LandingPage() {
     const { value } = selectedOption;
     const name = actionMeta.name;
     let updatedFilters = { ...selectedFilters };
+    setOffset(0);
     switch (name) {
+      case "searching":
+        updatedFilters = { ...updatedFilters, type: value };
       case "type":
         updatedFilters = { ...updatedFilters, type: value };
         break;
@@ -254,6 +260,9 @@ export default function LandingPage() {
       case "sortBy":
         updatedFilters = { ...updatedFilters, sort: value };
         break;
+      case "sortOrder":
+        updatedFilters = { ...updatedFilters, order: value };
+        break;
       case "levels":
         const selectedValues = selectedOption.map(option => option.value);
         if (selectedValues.includes(0)) {
@@ -268,7 +277,6 @@ export default function LandingPage() {
     }
 
     setSelectedFilters(updatedFilters);
-    // console.log(updatedFilters); // Log the updated filter values
   };
 
   const navigateToAnotherPage = (id) => {
@@ -286,6 +294,8 @@ export default function LandingPage() {
         <div className="mb-1">
           <div className="input-group rounded">
             <input
+            id= "searching"
+            name= "searching"
               type="search"
               className="form-control searching"
               placeholder="Search Yu-Gi-Oh! card database"
@@ -414,6 +424,8 @@ export default function LandingPage() {
                   />
                 </div>
 
+  
+
                 <div className="row">
                   <div className="col-12 col-md-6 ">
                     <Typography variant="h6" gutterBottom>
@@ -480,24 +492,17 @@ export default function LandingPage() {
         ) : <div>
           {viewMode === "table" && (
             <div className="container m-2 p-2 hov cardlist ">
-
-
               {searchResults.map((result) => (
                 <a onClick={() => navigateToAnotherPage(result._id)}>
                   <div className="card mb-3 p-1" key={result.id}>
                     <div className="row g-0">
                       <div className="col-md-4 col-12 w-auto fcol">
-                        {/* <img
-                          src={`${process.env.REACT_APP_CARD_IMG_SMALL_API}/${result.id}.jpg`}
-                          className="img-fluid rounded-start mt-1"
-                          alt={result.name}
-                        />
-                         */}
+
                         <img
                           src={`${process.env.REACT_APP_CARD_IMG_SMALL_API}/${result.id}.jpg`}
                           className="img-fluid rounded-start mt-1"
                           alt={result.name}
-                          style={{width:"10rem"}}
+                          style={{width:"10rem",borderRadius:"5px"}}
                           onError={(e) => {
                             e.target.onerror = null;
                             e.target.src = carddummysm;

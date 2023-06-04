@@ -53,11 +53,9 @@ function Tab1Component(props) {
         const fetchCollection = async () => {
             try {
                 const collectionResponse = await axios.get(`${process.env.REACT_APP_API}/collections/?userId=${userID}&type=card`)
-
                 if (!collectionResponse.data[0]) {
                     return; // End the function execution if data[0] is null or undefined
                 }
-
                 const itemIds = collectionResponse.data[0].itemIds;
                 setCId(collectionResponse.data[0]._id);
                 const cardResponses = await Promise.all(
@@ -286,7 +284,7 @@ function Tab1Component(props) {
                                                         src={`${process.env.REACT_APP_CARD_IMG_SMALL_API}/${result.id}.jpg`}
                                                         className="img-fluid rounded-start mt-1"
                                                         alt={result.name}
-                                                        style={{width:"10rem"}}
+                                                        style={{width:"10rem", borderRadius:"5px"}}
                                                         onError={(e) => {
                                                             e.target.onerror = null;
                                                             e.target.src = carddummysm;
@@ -361,7 +359,7 @@ function Tab1Component(props) {
                                                         src={`${process.env.REACT_APP_CARD_IMG_SMALL_API}/${result.id}.jpg`}
                                                         className="img-fluid rounded-start mt-1"
                                                         alt={result.name}
-                                                        style={{width:"2rem"}}
+                                                        style={{width:"2rem", borderRadius:"5px"}}
                                                         onError={(e) => {
                                                             e.target.onerror = null;
                                                             e.target.src = carddummysm;

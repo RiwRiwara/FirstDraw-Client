@@ -49,22 +49,23 @@ function Navbar() {
                   role="button"
                   data-bs-toggle="dropdown"
                   aria-expanded="false"
+                  style={{ cursor: "pointer" }}
                 >
                   Home
                 </a>
                 <ul className="dropdown-menu " aria-labelledby="navbarDropdown">
                   <li>
-                    <a className="dropdown-item" onClick={() => handleNavigation("/")} >
+                    <a className="dropdown-item" onClick={() => handleNavigation("/")} style={{ cursor: "pointer" }} >
                       Search
                     </a>
                   </li>
                   <li>
-                    <a className="dropdown-item " onClick={() => handleNavigation("/blogs")}>
+                    <a className="dropdown-item " onClick={() => handleNavigation("/blogs")} style={{ cursor: "pointer" }}>
                       Blog
                     </a>
                   </li>
                   <li>
-                    <a className="dropdown-item " onClick={() => handleNavigation("/news")}>
+                    <a className="dropdown-item " onClick={() => handleNavigation("/news")} style={{ cursor: "pointer" }}>
                       News
                     </a>
                   </li>
@@ -87,7 +88,7 @@ function Navbar() {
                 <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
                   <li>
                     <a className="dropdown-item " onClick={() => handleNavigation("/admin/request")} style={{cursor:"pointer"}}>
-                      User Request
+                      Card Request
                     </a>
                   </li>
                   <li>
@@ -135,7 +136,7 @@ function Navbar() {
               {user && (
                 <li className="nav-item">
                   <a className="nav-link text-primary"
-                    onClick={() => handleNavigation("/")}
+                    onClick={() => handleNavigation("/request")}
                     style={{ cursor: "pointer" }}
                   >
                     Request

@@ -127,10 +127,10 @@ function CardDetail(props) {
                                             {card.desc}
                                         </Typography>
                                     </Box>
-
                                     <FullScreenDialog
                                         card={card}
                                     />
+
                                 </div>
                             </div>
                         </div>
