@@ -7,6 +7,8 @@ import ReactQuill from "react-quill"
 import 'react-quill/dist/quill.snow.css'
 import Navbar from "../../components/common/navbar/navbar";
 import { useAuthContext } from "../../hooks/useAuthContext";
+import PageTitle from "../../components/features/pageTitle";
+import { Divider } from "@mui/material";
 
 const SingleComponent = () => {
   const { user } = useAuthContext()
@@ -77,10 +79,7 @@ const SingleComponent = () => {
     <div>
       <Navbar />
       <div className="container p-3">
-        <nav class="breadcrumb">
-          <a class="breadcrumb-item" href="/blogs">Blog</a>
-          <span class="breadcrumb-item active" aria-current="page">Blog : {blog.title} {new Date(blog.updatedAt).toLocaleString()}</span>
-        </nav>
+        <PageTitle title="Single Blog" />
 
         {isAdmin && (
           <div className="text-end">
@@ -121,17 +120,18 @@ const SingleComponent = () => {
               <h4 className="card-subtitle mb-2 text-muted">{blog.author}</h4>
             )}
             {editMode ? (
-              <ReactQuill
-                value={content}
-                onChange={submitContent}
-                theme="snow"
-                placeholder="My story . . ."
+              <>
+                <ReactQuill
+                  value={content}
+                  onChange={submitContent}
+                  theme="snow"
+                  placeholder="My story . . ."
 
-              />
+                /></>
             ) : (
-
-
-              <div dangerouslySetInnerHTML={{ __html: content }} />
+              <>
+                <Divider className="mt-2 mb-2" />
+                <div dangerouslySetInnerHTML={{ __html: content }} /></>
             )}
             {editMode && (
               <button className="btn btn-primary mt-3 customBtn" onClick={saveBlog}>

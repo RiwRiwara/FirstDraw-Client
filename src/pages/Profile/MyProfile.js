@@ -14,7 +14,7 @@ export default function MyProfile() {
   const user = JSON.parse(localStorage.getItem("user")).data;
   const [cardCollection, setCardCollection] = useState("No data")
   const navigate = useNavigate()
-
+  
 useEffect(() => {
   const fetchData = async () => {
     try {
@@ -383,6 +383,7 @@ useEffect(() => {
               img={selectedImage}
               displayname={dname}
               bio={bio}
+              email={user.user.email}
               cardCollection={cardCollection}
             />
           </section>

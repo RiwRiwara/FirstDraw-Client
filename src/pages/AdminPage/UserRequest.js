@@ -137,6 +137,7 @@ const UserRequest = () => {
                       <TableCell className="fw-bold">Requested Date</TableCell>
                       <TableCell className="fw-bold">Status</TableCell>
                       <TableCell className="fw-bold">Note</TableCell>
+                      <TableCell className="fw-bold">Type</TableCell>
                       <TableCell className="fw-bold">Actions</TableCell>
                     </TableRow>
                   </TableHead>
@@ -174,6 +175,11 @@ const UserRequest = () => {
                             <textarea rows={3} placeholder=". . ." className="w-100" id="txtarea">
 
                             </textarea>
+                          </TableCell>
+                          <TableCell >
+                          <div className="fw-bold" style={{ color: result.type === 'card' ? 'green' : 'blue' }}>
+                                {result.type}
+                              </div>
                           </TableCell>
                           <TableCell >
                             <Grid container spacing={1} columns={{ xs: 8, sm: 8, md: 8 }}>

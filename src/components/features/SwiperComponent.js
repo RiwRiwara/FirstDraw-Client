@@ -1,6 +1,7 @@
 import React from 'react'
 import carddummysm from "../../assets/images/dummycardsmall.jpg"
 import bg1 from "../../assets/images/yugiohBg1.jpg"
+import bg2 from "../../assets/images/yugiohBg2.jpg"
 import { Swiper, SwiperSlide } from "swiper/react";
 import 'swiper/css';
 import 'swiper/css/navigation';
@@ -48,7 +49,7 @@ export default function SwiperComponent() {
                 </SwiperSlide>
                 <SwiperSlide>
                     <img
-                        src={bg1}
+                        src={bg2}
                         className="img-fluid rounded-start mt-1"
                         style={{ borderRadius: "10px" }}
                         onError={(e) => {

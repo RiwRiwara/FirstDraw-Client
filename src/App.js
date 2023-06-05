@@ -25,6 +25,7 @@ import NoLogin from "./components/features/NoLogin";
 import Request from "./pages/Request/Request";
 import TestPage from "./components/features/test";
 import ErrorPage from "./components/features/errorPage";
+import AnotherProfile from "./pages/Profile/anotherProfile";
 
 
 const MyRoute = () => {
@@ -54,6 +55,7 @@ const MyRoute = () => {
               <Route path="/profile" element={<MyProfile />} />
               <Route path="/create" element={<FromComponent />} />
               <Route path="/request" element={<Request />} />
+              <Route path="/admin/user/:userid" element={<AnotherProfile />} />
             </Route>
 
             <Route exact path='/' element={<PrivateRouteAdmin />}>

@@ -6,6 +6,8 @@ import { useNavigate } from "react-router-dom";
 import ReactQuill from "react-quill"
 import 'react-quill/dist/quill.snow.css';
 import Navbar from "../../components/common/navbar/navbar";
+import PageTitle from "../../components/features/pageTitle";
+import { Divider } from "@mui/material";
 
 
 export default function FromComponent() {
@@ -50,11 +52,9 @@ export default function FromComponent() {
     <div>
       <Navbar/>
       <div className="container p-5">
-        <nav class="breadcrumb">
-          <a class="breadcrumb-item" href="/blogs">Blog</a>
-          <span class="breadcrumb-item active" aria-current="page">Create Blog</span>
-        </nav>
-        <h1>Write Blog</h1>
+      <PageTitle title="Create Blog"/>
+      <Divider className="mt-2 mb-2"/>
+        <h2 className="text-center fw-bold">Write Blog</h2>
         <form onSubmit={submitForm}>
           <div className="mb-3">
             <label for="" className="form-label">
@@ -77,8 +77,15 @@ export default function FromComponent() {
               value={content}
               onChange={submitContent}
               theme="snow"
-              placeholder="My story . . ."
-
+              placeholder="My story . . 
+              
+              
+              
+              
+              
+              "
+              className="rounded"
+              style={{minHeight:"10rem"}}
             />
           </div>
           <div className="mb-3">
@@ -94,8 +101,8 @@ export default function FromComponent() {
               onChange={inputValue("author")}
             />
           </div>
-          <div className="login-bt mb-2">
-            <button type="submit" className="btn btn-primary">
+          <div className="login-bt mb-2 ">
+            <button type="submit" className="w-100 btn btn-primary">
               Submit
             </button>
           </div>

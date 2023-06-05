@@ -147,7 +147,7 @@ export default function FullScreenDialog(props) {
                 <h3 className='fw-bold p-2'>Card Collection</h3>
                 <List className='p-2 m-1'>
                     <Stack direction="row" spacing={2}>
-                        <Item className='fw-bold text-primary'>Space: {lencardCollection}/100</Item>
+                        <Item className='fw-bold text-primary'>Space: {lencardCollection}/{user.user.tier === "Silver" ? 50 : user.user.tier === "Blue" ? 100 : "inf"}</Item>
                         <Tooltip title={isOwnCard ? "You already have this card in collection" : ""} TransitionComponent={Zoom} placement="top">
                             <button
                                 type="button"
@@ -158,9 +158,7 @@ export default function FullScreenDialog(props) {
                                     } else {
                                         addItemToCollection(props.card._id);
                                     }
-                                }}
-
-                            >
+                                }}>
                                 {isOwnCard ? "Remove card from collection" : "Add card from collection"}
                             </button>
                         </Tooltip>
@@ -169,56 +167,59 @@ export default function FullScreenDialog(props) {
                     </Stack>
                 </List>
                 <Divider />
-                <h3 className='fw-bold p-2'>Deck Collection</h3>
-                <div>
-                    <Card sx={{ maxWidth: '100%', margin: "1rem" }}>
-                        <CardMedia
-                            sx={{ height: 100 }}
-                            image="https://firstdraw.blob.core.windows.net/cardimgs/70832512.jpg"
-                            title="deck"
-                        />
-                        <CardContent>
-                            <Typography gutterBottom variant="h5" component="div">
-                                Lizard
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary">
-                                Deck for counter trap and spells.
-                            </Typography>
-                        </CardContent>
-                        <CardActions>
-                            <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 12, sm: 12, md: 12 }}>
-                                <Grid item xs={6} sm={6} md={4}>
-                                    <div className="fw-bold text-primary">Space: 10/40</div>
-                                </Grid>
-                                <Grid item xs={6} sm={6} md={4}>
-                                    <FormControl sx={{ minWidth: 120 }} size="small" className='w-100'>
-                                        <InputLabel id="demo-select-small-label">Number of Cards</InputLabel>
-                                        <Select
-                                            labelId="demo-select-small-label"
-                                            id="demo-select-small"
-                                            value={nCard}
-                                            label="Cards"
-                                            onChange={(e) => handleChange(e.target.value)}
-                                        >
-                                            <MenuItem value={0}>0</MenuItem>
-                                            <MenuItem value={1}>1</MenuItem>
-                                            <MenuItem value={2}>2</MenuItem>
-                                            <MenuItem value={3}>3</MenuItem>
-                                        </Select>
-                                    </FormControl>
-                                </Grid>
-                                <Grid item xs={12} sm={12} md={4}>
-                                    <Button variant="contained" color="primary" onClick={(e) => { console.log(e) }} className='w-100'>
-                                        Add card to Deck
-                                    </Button>
-                                </Grid>
-                            </Grid>
+                <div className='' style={{ pointerEvents: "none",opacity: "0.6"}}>
+                    <h3 className='fw-bold p-2'>Deck Collection</h3>
+                    <div>
+                        <Card sx={{ maxWidth: '100%', margin: "1rem" }}>
+                            <CardMedia
+                                sx={{ height: 100 }}
+                                image="https://firstdraw.blob.core.windows.net/cardimgs/70832512.jpg"
+                                title="deck"
+                            />
+                            <CardContent>
+                                <Typography gutterBottom variant="h5" component="div">
+                                    Cross Warrior!
+                                </Typography>
+                                <Typography variant="body2" color="text.secondary">
+                                    Deck for counter trap and spells.
+                                </Typography>
+                            </CardContent>
 
-                        </CardActions>
-                    </Card>
+                            <CardActions>
+                                <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 12, sm: 12, md: 12 }}>
+                                    <Grid item xs={6} sm={6} md={4}>
+                                        <div className="fw-bold text-primary">Space: 10/40</div>
+                                    </Grid>
+                                    <Grid item xs={6} sm={6} md={4}>
+                                        <FormControl sx={{ minWidth: 120 }} size="small" className='w-100'>
+                                            <InputLabel id="demo-select-small-label">Number of Cards</InputLabel>
+                                            <Select
+                                                labelId="demo-select-small-label"
+                                                id="demo-select-small"
+                                                value={nCard}
+                                                label="Cards"
+                                                onChange={(e) => handleChange(e.target.value)}
+                                            >
+                                                <MenuItem value={0}>0</MenuItem>
+                                                <MenuItem value={1}>1</MenuItem>
+                                                <MenuItem value={2}>2</MenuItem>
+                                                <MenuItem value={3}>3</MenuItem>
+                                            </Select>
+                                        </FormControl>
+                                    </Grid>
+                                    <Grid item xs={12} sm={12} md={4}>
+                                        <Button variant="contained" color="primary" onClick={(e) => { console.log(e) }} className='w-100'>
+                                            Add card to Deck
+                                        </Button>
+                                    </Grid>
+                                </Grid>
 
+                            </CardActions>
+                        </Card>
+                    </div>
 
                 </div>
+
                 <Divider />
                 <Snackbar open={ShowAlert} autoHideDuration={6000} onClose={handleCloseAction}>
                     <Alert onClose={handleCloseAction} severity={!isOwnCard ? "error" : "success"} sx={{ width: '100%' }}>

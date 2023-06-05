@@ -12,6 +12,7 @@ function PublicProfile(props) {
     const selectedImage = props.img;
     const displayname = props.displayname;
     const bio = props.bio;
+    const email = props.email;
     const cardCollection = props.cardCollection
 
 
@@ -54,36 +55,37 @@ function PublicProfile(props) {
     };
     return (
         <div>
-            <div className="container mt-3">
+            <div className="container mt-2 p-2">
                 <h2 className="fw-semibold">Public Detail</h2>
                 <p>This is people can see you profile. </p>
-                <hr className="bg-danger border-4 border-top border-primary"></hr>
-                <div className='row mb-3'>
-                    <div className="col-12 col-md-4 justify-content-center d-flex">
-                        <img
-                            src={selectedImage}
-                            className="rounded-top  profileimg"
-                            style={{ aspectRatio: '4/5' }}
-                            alt=""
-                        />
-                    </div>
-                    <div className="col-12 col-md-8">
-                        <div className='d-flex justify-content-center'>
-                            <h4 className='fw-bold m-2'>{displayname}</h4>
-                        </div>
-                        <div className='row'>
-                            <textarea
-                                className="form-control pe-none"
-                                value={bio}
-                                rows="4"
-                            ></textarea>
-                        </div>
 
-                    </div>
+                <div className='d-flex justify-content-center'>
+                    <h3 className='fw-bold m-2'>{displayname}</h3>
                 </div>
                 <hr className="bg-danger border-4 border-top border-primary"></hr>
+                <Grid container spacing={1} columns={{ xs: 4, sm: 8, md: 12 }}>
+                    <Grid item xs={4} sm={8} md={4} key={"PP1"}>
+                        <div className='d-flex justify-content-center'>
+                            <img
+                                src={selectedImage}
+                                className="rounded profileimg"
+                                style={{ width: '15rem', height: "16rem" }}
+                                alt=""
+                            />
+                        </div>
+                    </Grid>
+                    <Grid item xs={4} sm={8} md={8} key={"PP2"}>
+                        <div className='bg-secondary p-2 rounded mb-3'>
+                            {email}
+                        </div>
+                        <div className='bg-secondary p-2 rounded' style={{minHeight:"10rem"}}>
+                            {bio}
+                        </div>
+                    </Grid>
+                </Grid>
+                <hr className="bg-danger border-4 border-top border-primary"></hr>
 
-                <Accordion>
+                {/* <Accordion>
                     <AccordionSummary
                         expandIcon={<ExpandMoreIcon />}
                         aria-controls="panel1a-content"
@@ -93,23 +95,24 @@ function PublicProfile(props) {
                             <h5 className='fw-bold'>Collection - Cards</h5>
                         </Typography>
                     </AccordionSummary>
-                    <AccordionDetails>
-                        <div className="container bg-secondary rounded">
-                            <div className="row">
-                                <div className="col">
-                                    <table className="table">
-                                        <tbody>
-                                            {renderTableRows()}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
+                    <AccordionDetails> */}
+                <h4 className='fw-bold'>Collection - Cards</h4>
+                <div className="container bg-secondary rounded">
+                    <div className="row">
+                        <div className="col">
+                            <table className="table">
+                                <tbody>
+                                    {renderTableRows()}
+                                </tbody>
+                            </table>
                         </div>
+                    </div>
+                </div>
 
-                    </AccordionDetails>
-                </Accordion>
+                {/* </AccordionDetails>
+                </Accordion> */}
 
-                <hr className="bg-danger border-4 border-top border-primary"></hr>
+                {/* <hr className="bg-danger border-4 border-top border-primary"></hr>
                 <Accordion>
                     <AccordionSummary
                         expandIcon={<ExpandMoreIcon />}
@@ -125,7 +128,7 @@ function PublicProfile(props) {
 
                     </AccordionDetails>
                 </Accordion>
-                <hr className="bg-danger border-4 border-top border-primary"></hr>
+                <hr className="bg-danger border-4 border-top border-primary"></hr> */}
             </div>
         </div>
     )

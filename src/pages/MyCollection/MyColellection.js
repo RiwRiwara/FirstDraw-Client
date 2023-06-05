@@ -42,13 +42,7 @@ const MyCollection = () => {
     <>
       <Navbar />
       <div className="container p-3">
-        <div className="d-flex justify-content-center">
-          <CollectionsBookmarkIcon sx={{ fontSize: '2.5rem', marginRight: '0.5rem' }} />
-          <Typography variant="h4" component="h4" className="fw-bold">
-            My Collection
-          </Typography>
-        </div>
-        <div className="container p-3">
+        {/* <div className="container p-3">
           <Box sx={{ width: '100%' }}>
             <Tabs
               value={value}
@@ -62,8 +56,8 @@ const MyCollection = () => {
               <Tab value="two" label="Decks Collection" sx={{ flexGrow: 1, fontSize: '1.1rem',fontWeight: 'bold' }} />
             </Tabs>
           </Box>
-        </div>
-        <div className="container mt-2 p-2">
+        </div> */}
+        <div className="container mt-2 p-2" >
           <TransitionGroup>
             <CSSTransition
               key={value}

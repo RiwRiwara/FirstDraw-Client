@@ -2,9 +2,11 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import Navbar from "../../components/common/navbar/navbar";
 import { useAuthContext } from "../../hooks/useAuthContext";
+import { Link, useNavigate } from "react-router-dom";
 
 function Blogs() {
   const { user } = useAuthContext()
+  const navigate = useNavigate()
   const isAdmin = user && user.data && user.data.isAdmin;
   const [blogs, setBlogs] = useState([]);
 
@@ -29,23 +31,22 @@ function Blogs() {
         <div className="h1 mb-3 fw-bold">Blogs</div>
 
         {isAdmin && (
-          <a className="" href="/create">
-            <button type="" className="btn btn-primary w-100 mb-4">
+            <button type="" className="btn btn-primary w-100 mb-4" onClick={()=>navigate("/create")}>
               Create blog
             </button>
-          </a>
         )}
 
         {blogs.map((blog, index) => (
           <div class="card mb-3">
-            <a href={`blogs/${blog.slug}`}>
+            <button onClick={()=>navigate(`/blogs/${blog.slug}`)}>
               <div class="h5 fw-bold card-header">
               {blog.title}
               </div>
-            </a>
+            </button>
             <div class="card-body">
               <blockquote class=" ">
-                <p>{<div dangerouslySetInnerHTML={{ __html: (blog.content.substring(0, 200)) }} />}. . .<a href={`blogs/${blog.slug}`}>more</a></p>
+                <p>{<div dangerouslySetInnerHTML={{ __html: (blog.content.substring(0, 200)) }} />}. . .<a onClick={()=>navigate(`/blogs/${blog.slug}`)}> more</a>
+                </p>
                 <footer class="blockquote-footer">Author : <cite title="Source Title">{blog.author} &nbsp;</cite>Public : {new Date(blog.updatedAt).toLocaleString()}</footer>
               </blockquote>
             </div>

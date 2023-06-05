@@ -25,8 +25,8 @@ function Premium() {
                             <p className="card-text fw-bold">SILVER FANG</p>
                             <ui>
                                 <li>Normal User</li>
-                                <li>100 Cards</li>
-                                <li>2 Decks</li>
+                                <li>50 Cards</li>
+                                {/* <li>2 Decks</li> */}
                             </ui>
                         </div>
                     </div>
@@ -40,8 +40,8 @@ function Premium() {
                             <ui>
                                 <li>Higher User</li>
                                 <li>Blue Eye Profile</li>
-                                <li>1000 Cards</li>
-                                <li>10 Decks</li>
+                                <li>100 Cards</li>
+                                {/* <li>10 Decks</li> */}
                             </ui>
                         </div>
                     </div>
@@ -56,7 +56,7 @@ function Premium() {
                                 <li>Superior User</li>
                                 <li>Ra Profile</li>
                                 <li>Unlimited Cards</li>
-                                <li>Unlimited Decks</li>
+                                {/* <li>Unlimited Decks</li> */}
                             </ui>
                         </div>
                     </div>

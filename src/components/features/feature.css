@@ -1,0 +1,42 @@
+.overlayF {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 30%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    opacity: 0.9;
+    transition: opacity 0.3s ease-in-out;
+  }
+  
+  .overlayF:hover {
+    opacity: 1;
+    background-color: rgba(2, 0, 115, 0.8);
+  }
+  
+  .textF {
+    color: white;
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 8px;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .overlayF:hover .textF {
+    transform: scale(1.1);
+  }
+  
+
+  .l1:hover {
+    transform: scale(1.02);
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .l1 {
+    transition: all 0.3s ease-in-out;
+  }
+  

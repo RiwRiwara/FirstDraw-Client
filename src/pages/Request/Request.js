@@ -128,7 +128,8 @@ const Request = () => {
       .post(`${process.env.REACT_APP_API}/requests`, {
         user: userData,
         cardReq: reqData,
-        userid: userData._id
+        userid: userData._id,
+        type:"card"
 
       }).then((res) => {
 

@@ -14,6 +14,8 @@ import { useNavigate } from "react-router-dom";
 import carddummy from "../../assets/images/dummycard.jpg"
 import carddummysm from "../../assets/images/dummycardsmall.jpg"
 import SwiperComponent from "../../components/features/SwiperComponent";
+import LandingMenu from "../../components/features/LandingMenu";
+import PoppularCard from "../../components/features/PopularCard";
 
 const animatedComponents = makeAnimated();
 const minDistance = 5;
@@ -298,18 +300,21 @@ export default function LandingPage() {
       <Navbar />
 
       <div className="container mt-3 " >
-        <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
-          <Grid item xs={4} sm={8} md={8} >
+        <Grid container spacing={{ xs: 2, md: 2 }} columns={{ xs: 4, sm: 8, md: 12 }}>
+          <Grid item xs={4} sm={8} md={6} >
             <SwiperComponent />
           </Grid>
-          <Grid item xs={4} sm={8} md={4} >
-            <div className="bg-danger">xs=2</div>
+          <Grid item xs={4} sm={8} md={6} >
+              <LandingMenu/>
           </Grid>
         </Grid>
 
       </div>
       <div className="container mt-3 " style={{ minHeight: "20rem" }}>
         <h2 className="fw-bold">Most Popular Card</h2>
+        <div>
+          <PoppularCard />
+        </div>
       </div>
 
       <div className="container mt-3">

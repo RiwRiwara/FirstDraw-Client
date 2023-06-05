@@ -6,7 +6,7 @@ import {
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { DeleteOutline } from '@mui/icons-material';
+import { CollectionsBookmarkTwoTone, DeleteOutline } from '@mui/icons-material';
 import "./style.css"
 import Swal from "sweetalert2";
 import carddummysm from "../../assets/images/dummycardsmall.jpg";
@@ -14,7 +14,9 @@ import carddummysm from "../../assets/images/dummycardsmall.jpg";
 function Tab1Component(props) {
     // Dialog
     let userID = props.id
+    const user = JSON.parse(localStorage.getItem("user")).data.user
     const [open, setOpen] = useState(false);
+    const [cardlen, setCardLen] = useState(0);
     const handleClickOpen = () => {
         setOpen(true);
     };
@@ -54,16 +56,16 @@ function Tab1Component(props) {
             try {
                 const collectionResponse = await axios.get(`${process.env.REACT_APP_API}/collections/?userId=${userID}&type=card`)
                 if (!collectionResponse.data[0]) {
-                    return; // End the function execution if data[0] is null or undefined
+                    return;
                 }
                 const itemIds = collectionResponse.data[0].itemIds;
                 setCId(collectionResponse.data[0]._id);
                 const cardResponses = await Promise.all(
                     itemIds.map(itemId => axios.get(`${process.env.REACT_APP_API}/cards/?id=${itemId}`))
                 );
-
                 const searchResults = cardResponses.map(response => response.data[0]).filter(result => result !== undefined);
                 setSearchResults(searchResults);
+                setCardLen(searchResults.length)
                 setOffset(limit);
             } catch (error) {
                 console.error(error);
@@ -191,7 +193,15 @@ function Tab1Component(props) {
 
     return (
         <div className='container'>
-
+            <div className="d-flex justify-content-center">
+                <CollectionsBookmarkTwoTone sx={{ fontSize: '2.5rem', marginRight: '0.5rem' }} />
+                <Typography variant="h4" component="h4" className="fw-bold">
+                    My Cards Collection
+                </Typography>
+                <Typography sx={{ marginLeft: '0.5rem' }} variant="h6" component="h6" className="fw-bold text-bg-primary p-1 rounded">
+                    {cardlen}/{user.tier === "Silver" ? 50 : user.tier === "Blue" ? 100 : "inf"}
+                </Typography>
+            </div>
             <div className='container mt-2 mb-3'>
                 <Box sx={{ flexGrow: 1 }}>
                     <Grid container spacing={1}>
@@ -246,200 +256,202 @@ function Tab1Component(props) {
                 </Box>
             </div>
 
-            {loading ? (
-                <div className="card mb-3 p-1">
-                    <div className="row g-0">
-                        <div className="col-md-4 col-12 w-auto fcol">
-                            <Skeleton variant="rectangular" width={170} height={210} />
-                        </div>
-                        <div className="col-md-10 col-12">
-                            <Skeleton />
-                            <div className="card-body">
-                                <hr className="border-1 border-top border-primary" />
-                                <div className="">
+            <div className='bg-secondary p-2 rounded' style={{ minHeight: "20rem" }}>
+                {loading ? (
+                    <div className="card mb-3 p-1">
+                        <div className="row g-0">
+                            <div className="col-md-4 col-12 w-auto fcol">
+                                <Skeleton variant="rectangular" width={170} height={210} />
+                            </div>
+                            <div className="col-md-10 col-12">
+                                <Skeleton />
+                                <div className="card-body">
+                                    <hr className="border-1 border-top border-primary" />
+                                    <div className="">
+                                        <Skeleton animation="wave" />
+                                    </div>
+                                    <hr className="border-1 border-top border-primary" />
                                     <Skeleton animation="wave" />
                                 </div>
-                                <hr className="border-1 border-top border-primary" />
-                                <Skeleton animation="wave" />
                             </div>
                         </div>
                     </div>
-                </div>
-            ) : !loading && searchResults.length === 0 ? (
-                <div className="h4 d-flex justify-content-center m-4">
-                    No cards found!
-                </div>
+                ) : !loading && searchResults.length === 0 ? (
+                    <div className="h4 d-flex justify-content-center m-4 fw-bold ">
+                        No cards found!
+                    </div>
 
-            ) : <div>
-                {viewMode === "table" && (
-                    <div>
-                        {subViewList === "+" && (
-                            <div className="container m-2 p-2 hov cardlist ">
-                                {searchResults.map((result) => (
-                                    <a onClick={() => navigateToAnotherPage(`/cards/${result._id}`)}>
-                                        <div className="card mb-3 p-1" key={result.id}>
-                                            <div className="row g-0">
+                ) : <div>
+                    {viewMode === "table" && (
+                        <div>
+                            {subViewList === "+" && (
+                                <div className="container m-2 p-2 hov cardlist ">
+                                    {searchResults.map((result) => (
+                                        <a onClick={() => navigateToAnotherPage(`/cards/${result._id}`)}>
+                                            <div className="card mb-3 p-1" key={result.id}>
+                                                <div className="row g-0">
+                                                    <div className="col-md-4 col-12 w-auto fcol">
+                                                        <img
+                                                            src={`${process.env.REACT_APP_CARD_IMG_SMALL_API}/${result.id}.jpg`}
+                                                            className="img-fluid rounded-start mt-1"
+                                                            alt={result.name}
+                                                            style={{ width: "10rem", borderRadius: "5px" }}
+                                                            onError={(e) => {
+                                                                e.target.onerror = null;
+                                                                e.target.src = carddummysm;
+                                                            }}
+                                                        />
+                                                    </div>
+                                                    <div className="col-md-10 col-12">
+                                                        <div className="card-body">
+                                                            <h5 className="card-title fw-bold ">{result.name}</h5>
+                                                            <hr className="border-1 border-top border-primary"></hr>
+                                                            <div className="">
+                                                                [{result.type}]&nbsp;&nbsp;[{result.race}]&nbsp;&nbsp;
+                                                                {(result.atk !== null && result.atk !== undefined) && (
+                                                                    <span>
+                                                                        <i className="fa-solid fa-hand-fist"></i>
+                                                                        {result.atk}&nbsp;&nbsp;
+                                                                    </span>
+                                                                )}
+                                                                {(result.def !== null && result.def !== undefined) && (
+                                                                    <span>
+                                                                        <i className="fa-solid fa-shield"></i>
+                                                                        {result.def}
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                            <hr className="border-1 border-top border-primary"></hr>
+
+                                                            <p className="card-text">{result.desc}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <Tooltip title="Remove from collection." TransitionComponent={Zoom}>
+                                                    <IconButton
+                                                        sx={{
+                                                            position: 'absolute',
+                                                            top: { xs: '0rem', sm: '0.5rem' },
+                                                            bottom: { xs: 'auto', sm: 'auto' },
+                                                            right: { xs: '0rem', sm: '3rem' },
+                                                        }}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            deleteItemFromCollection(result._id)
+                                                        }}
+                                                    >
+                                                        <DeleteOutline />
+                                                    </IconButton>
+                                                </Tooltip>
+                                            </div>
+
+                                        </a>
+                                    ))}
+
+                                </div>
+
+                            )}
+
+                            {subViewList === "-" && (
+                                <div className="container m-2 p-2 hov cardlist">
+                                    {searchResults.map((result, index) => (
+                                        <a
+                                            onClick={() => navigateToAnotherPage(`/cards/${result._id}`)}
+                                            key={result.id}
+                                            style={{ cursor: 'pointer' }}
+                                        >
+                                            <Card sx={{ display: 'flex', m: 0 }} className="lsmall m-1">
                                                 <div className="col-md-4 col-12 w-auto fcol">
-                                                    <img
-                                                        src={`${process.env.REACT_APP_CARD_IMG_SMALL_API}/${result.id}.jpg`}
-                                                        className="img-fluid rounded-start mt-1"
-                                                        alt={result.name}
-                                                        style={{width:"10rem", borderRadius:"5px"}}
-                                                        onError={(e) => {
-                                                            e.target.onerror = null;
-                                                            e.target.src = carddummysm;
-                                                        }}
-                                                    />
-                                                </div>
-                                                <div className="col-md-10 col-12">
-                                                    <div className="card-body">
-                                                        <h5 className="card-title fw-bold ">{result.name}</h5>
-                                                        <hr className="border-1 border-top border-primary"></hr>
-                                                        <div className="">
-                                                            [{result.type}]&nbsp;&nbsp;[{result.race}]&nbsp;&nbsp;
-                                                            {(result.atk !== null && result.atk !== undefined) && (
-                                                                <span>
-                                                                    <i className="fa-solid fa-hand-fist"></i>
-                                                                    {result.atk}&nbsp;&nbsp;
-                                                                </span>
-                                                            )}
-                                                            {(result.def !== null && result.def !== undefined) && (
-                                                                <span>
-                                                                    <i className="fa-solid fa-shield"></i>
-                                                                    {result.def}
-                                                                </span>
-                                                            )}
-                                                        </div>
-                                                        <hr className="border-1 border-top border-primary"></hr>
-
-                                                        <p className="card-text">{result.desc}</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <Tooltip title="Remove from collection." TransitionComponent={Zoom}>
-                                                <IconButton
-                                                    sx={{
-                                                        position: 'absolute',
-                                                        top: { xs: '0rem', sm: '0.5rem' },
-                                                        bottom: { xs: 'auto', sm: 'auto' },
-                                                        right: { xs: '0rem', sm: '3rem' },
-                                                    }}
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        deleteItemFromCollection(result._id)
-                                                    }}
-                                                >
-                                                    <DeleteOutline />
-                                                </IconButton>
-                                            </Tooltip>
-                                        </div>
-
-                                    </a>
-                                ))}
-
-                            </div>
-
-                        )}
-
-                        {subViewList === "-" && (
-                            <div className="container m-2 p-2 hov cardlist">
-                                {searchResults.map((result, index) => (
-                                    <a
-                                        onClick={() => navigateToAnotherPage(`/cards/${result._id}`)}
-                                        key={result.id}
-                                        style={{ cursor: 'pointer' }}
-                                    >
-                                        <Card sx={{ display: 'flex', m: 0 }} className="lsmall m-1">
-                                            <div className="col-md-4 col-12 w-auto fcol">
-                                                <div style={{ display: 'flex', alignItems: 'center' }}>
-                                                    <Typography variant="h6" sx={{ fontWeight: 'bold', marginRight: '0.5rem', marginLeft: '0.5rem' }}>
-                                                        {index + 1}.
-                                                    </Typography>
-                                                    <img
-                                                        src={`${process.env.REACT_APP_CARD_IMG_SMALL_API}/${result.id}.jpg`}
-                                                        className="img-fluid rounded-start mt-1"
-                                                        alt={result.name}
-                                                        style={{width:"2rem", borderRadius:"5px"}}
-                                                        onError={(e) => {
-                                                            e.target.onerror = null;
-                                                            e.target.src = carddummysm;
-                                                        }}
-                                                    />
-
-                                                </div>
-                                            </div>
-                                            <div className="col-md-8 col-12 w-100">
-                                                <CardContent sx={{ display: 'flex', justifyContent: 'space-between' }}>
-
-                                                    <div className='container '>
-                                                        <div className='h5 fw-bold' style={{fontSize:"1rem"}}>
-                                                            {result.name}
-                                                        </div>
-                                                        <p className='container' style={{ fontSize: "0.5rem" }}>
-                                                            <span className="info">{`[${result.type}]`}</span>
-                                                            <span className="info">{`[${result.race}]`}</span>
-                                                            {(result.atk !== null && result.atk !== undefined) && (
-                                                                <span>
-                                                                    <i className="fa-solid fa-hand-fist"></i>
-                                                                    <span className="info">{`${result.atk}`}</span>
-                                                                </span>
-                                                            )}
-                                                            {(result.def !== null && result.def !== undefined) && (
-                                                                <span>
-                                                                    <i className="fa-solid fa-shield"></i>
-                                                                    <span className="info">{`${result.def}`}</span>
-                                                                </span>
-                                                            )}
-                                                        </p>
+                                                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                                                        <Typography variant="h6" sx={{ fontWeight: 'bold', marginRight: '0.5rem', marginLeft: '0.5rem' }}>
+                                                            {index + 1}.
+                                                        </Typography>
+                                                        <img
+                                                            src={`${process.env.REACT_APP_CARD_IMG_SMALL_API}/${result.id}.jpg`}
+                                                            className="img-fluid rounded-start mt-1"
+                                                            alt={result.name}
+                                                            style={{ width: "2rem", borderRadius: "5px" }}
+                                                            onError={(e) => {
+                                                                e.target.onerror = null;
+                                                                e.target.src = carddummysm;
+                                                            }}
+                                                        />
 
                                                     </div>
-                                                </CardContent>
-                                            </div>
-                                            <Tooltip title="Remove from collection." TransitionComponent={Zoom}>
-                                                <IconButton
-                                                    sx={{
-                                                        position: 'absolute',
-                                                        top: { xs: '0rem', sm: '0.5rem' },
-                                                        bottom: { xs: 'auto', sm: 'auto' },
-                                                        right: { xs: '0rem', sm: '0.5rem' },
-                                                    }}
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        deleteItemFromCollection(result._id)
-                                                    }}
-                                                >
-                                                    <DeleteOutline />
+                                                </div>
+                                                <div className="col-md-8 col-12 w-100">
+                                                    <CardContent sx={{ display: 'flex', justifyContent: 'space-between' }}>
 
-                                                </IconButton>
-                                            </Tooltip>
-                                        </Card>
+                                                        <div className='container '>
+                                                            <div className='h5 fw-bold' style={{ fontSize: "1rem" }}>
+                                                                {result.name}
+                                                            </div>
+                                                            <p className='container' style={{ fontSize: "0.5rem" }}>
+                                                                <span className="info">{`[${result.type}]`}</span>
+                                                                <span className="info">{`[${result.race}]`}</span>
+                                                                {(result.atk !== null && result.atk !== undefined) && (
+                                                                    <span>
+                                                                        <i className="fa-solid fa-hand-fist"></i>
+                                                                        <span className="info">{`${result.atk}`}</span>
+                                                                    </span>
+                                                                )}
+                                                                {(result.def !== null && result.def !== undefined) && (
+                                                                    <span>
+                                                                        <i className="fa-solid fa-shield"></i>
+                                                                        <span className="info">{`${result.def}`}</span>
+                                                                    </span>
+                                                                )}
+                                                            </p>
 
-                                    </a>
-                                ))}
-                            </div>
-                        )}
+                                                        </div>
+                                                    </CardContent>
+                                                </div>
+                                                <Tooltip title="Remove from collection." TransitionComponent={Zoom}>
+                                                    <IconButton
+                                                        sx={{
+                                                            position: 'absolute',
+                                                            top: { xs: '0rem', sm: '0.5rem' },
+                                                            bottom: { xs: 'auto', sm: 'auto' },
+                                                            right: { xs: '0rem', sm: '0.5rem' },
+                                                        }}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            deleteItemFromCollection(result._id)
+                                                        }}
+                                                    >
+                                                        <DeleteOutline />
 
-                    </div>
+                                                    </IconButton>
+                                                </Tooltip>
+                                            </Card>
 
-                )}
+                                        </a>
+                                    ))}
+                                </div>
+                            )}
 
-
-                {viewMode === "list" && (
-                    <div className="container">
-                        <div className="row">
-                            <div className="col">
-                                <table className="table">
-                                    <tbody>
-                                        {renderTableRows()}
-                                    </tbody>
-                                </table>
-                            </div>
                         </div>
 
-                    </div>
-                )}
+                    )}
 
-            </div>}
+                    {viewMode === "list" && (
+                        <div className="container">
+                            <div className="row">
+                                <div className="col">
+                                    <table className="table">
+                                        <tbody>
+                                            {renderTableRows()}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                        </div>
+                    )}
+
+                </div>}
+            </div>
+
         </div>
     );
 };

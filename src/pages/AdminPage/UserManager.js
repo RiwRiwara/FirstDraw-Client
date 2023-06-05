@@ -198,6 +198,8 @@ const UserManager = () => {
           <div className="container m-2">
             <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
               {allUsersData.map((user) => (
+
+
                 <Grid item xs={2} sm={2} md={2}>
                   <div className="d-flex justify-content-center cardImgAdmin" style={{ cursor: "pointer", borderRadius: "1rem" }}
                     onClick={() => { handleClickOpen(user) }}>
@@ -241,7 +243,8 @@ const UserManager = () => {
           <div className="container p-2 rounded mt-1 bg-secondary">
             <div className="input-grou d-flex justify-content-between">
 
-              <h3 className="fw-bold">{currentUser.displayname || "Guest"}</h3> <SearchIcon className="fs-1" />
+              <h3 className="fw-bold">{currentUser.displayname || "Guest"}</h3>
+              <SearchIcon className="fs-1" onClick={()=>{navigate(`${currentUser._id}`)}}/>
             </div>
             <Grid container columns={{ xs: 4, sm: 8, md: 12 }}>
               <Grid item xs={4} sm={8} md={3}>
@@ -352,7 +355,7 @@ const UserManager = () => {
             <DialogActions>
               <div className="btn-group" role="group" aria-label="Button group">
                 <button className="btn btn-success" onClick={() => { updateOnclick() }}>Save</button>
-                <button className="btn btn-danger" onClick={() => { deleteUserOnclick()}}>Delete</button>
+                <button className="btn btn-danger" onClick={() => { deleteUserOnclick() }}>Delete</button>
                 <button className="btn btn-primary" onClick={handleClose}>Close</button>
               </div>
             </DialogActions>
