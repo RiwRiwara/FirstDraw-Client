@@ -8,22 +8,44 @@ import axios from "axios";
 import PublicProfile from "./PublicProfile";
 import uploadImageToAzure from "../../utils/UploadImage";
 import Premium from "./Premuim";
+import { useNavigate } from "react-router-dom";
 
 export default function MyProfile() {
   const user = JSON.parse(localStorage.getItem("user")).data;
-  useEffect(() => {
-    axios
-      .get(`${process.env.REACT_APP_API}/user/?id=${user.user._id}`)
-      .then((response) => {
-        setDname(response.data.displayname);
-        setBio(response.data.bio);
-        setUid(response.data._id)
-        if(response.data.profile_img){
-          setSelectedImage(response.data.profile_img)
-        }
-      })
-      .catch((err) => { });
-  }, [user.user.email]);
+  const [cardCollection, setCardCollection] = useState("No data")
+  const navigate = useNavigate()
+
+useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const userResponse = await axios.get(`${process.env.REACT_APP_API}/user/?id=${user.user._id}`);
+      setDname(userResponse.data.displayname);
+      setBio(userResponse.data.bio);
+      setUid(userResponse.data._id)
+
+      if (userResponse.data.profile_img) {
+        setSelectedImage(userResponse.data.profile_img)
+      }
+
+      const collectionResponse = await axios.get(`${process.env.REACT_APP_API}/collections/?userId=${userResponse.data._id}&type=card`);
+      const itemIds = collectionResponse.data[0].itemIds;
+
+      const cardResponses = await Promise.all(
+        itemIds.map(itemId => axios.get(`${process.env.REACT_APP_API}/cards/?id=${itemId}`))
+      );
+      
+      const searchResults = cardResponses.map(response => response.data[0]).filter(result => result !== undefined);
+      setCardCollection(searchResults);
+
+    } catch (err) {
+      console.log(err)
+    }
+  }
+  
+  fetchData();
+  
+}, [user.user._id, user.user.email]);
+
 
   const [activeSection, setActiveSection] = useState("Account");
   const [selectedImage, setSelectedImage] = useState(profile);
@@ -34,6 +56,7 @@ export default function MyProfile() {
   const [bio, setBio] = useState(user.user.bio);
   const [newPassword, setNewPassword] = useState("");
   const [rePassword, setRePassword] = useState("");
+
 
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
@@ -114,44 +137,46 @@ export default function MyProfile() {
   };
 
   const saveOnclick = async () => {
-    if(selectedImage===profile){
+    if (selectedImage === profile) {
       Swal.fire("Warning", "Please select a profile image", "warning");
-    }else{
-    Swal.fire({
-      title: 'Are you sure?',
-      text: "Are you sure to keep this change?",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, change it!'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        const timestamp = Date.now(); // Generate a unique timestamp
-        const imageUrl = `${process.env.REACT_APP_AZURE_API}/userprofile/${uid}_profile.jpeg?t=${timestamp}`;
-        
-        axios
-        .put(`${process.env.REACT_APP_API}/user/${user.user.email}`, {
-          profile_img: imageUrl,
-        })
-        .then((res) => {
-          uploadImageToAzure(imgFile, file, uid)
-          Swal.fire("Complete", "profile has been changed!", "success");
-        })
-        .catch((err) => {
-          Swal.fire("Incompleted!", "Data not updated", "error");
-        });
-        
-      } else if (result.isDenied) {
-        Swal.fire("Changes are not saved", "", "info");
-      }
-    });
-  }
+    } else {
+      Swal.fire({
+        title: 'Are you sure?',
+        text: "Are you sure to keep this change?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, change it!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          const timestamp = Date.now(); // Generate a unique timestamp
+          const imageUrl = `${process.env.REACT_APP_AZURE_API}/userprofile/${uid}_profile.jpeg?t=${timestamp}`;
+
+          axios
+            .put(`${process.env.REACT_APP_API}/user/${user.user.email}`, {
+              profile_img: imageUrl,
+            })
+            .then((res) => {
+              uploadImageToAzure(imgFile, file, uid)
+              Swal.fire("Complete", "profile has been changed!", "success");
+            })
+            .catch((err) => {
+              Swal.fire("Incompleted!", "Data not updated", "error");
+            });
+
+        } else if (result.isDenied) {
+          Swal.fire("Changes are not saved", "", "info");
+        }
+      });
+    }
   };
 
   const handleSectionToggle = (sectionName) => {
     setActiveSection(sectionName);
   };
+
+
   return (
     <div>
       <Navbar />
@@ -327,7 +352,7 @@ export default function MyProfile() {
                 />
               </div>
               <div className="mb-3">
-          
+
                 <input
                   className="form-control"
                   type="file"
@@ -354,10 +379,11 @@ export default function MyProfile() {
           unmountOnExit
         >
           <section name="Public">
-            <PublicProfile 
-            img={selectedImage} 
-            displayname={dname}
-            bio={bio}
+            <PublicProfile
+              img={selectedImage}
+              displayname={dname}
+              bio={bio}
+              cardCollection={cardCollection}
             />
           </section>
         </CSSTransition>

@@ -9,10 +9,12 @@ import {
   attributeOptions, sortOption
 } from '../../assets/data/data';
 import makeAnimated from 'react-select/animated';
-import { Typography, Skeleton, Box, Slider } from '@mui/material';
+import { Typography, Skeleton, Box, Slider, Grid } from '@mui/material';
 import { useNavigate } from "react-router-dom";
 import carddummy from "../../assets/images/dummycard.jpg"
 import carddummysm from "../../assets/images/dummycardsmall.jpg"
+import SwiperComponent from "../../components/features/SwiperComponent";
+
 const animatedComponents = makeAnimated();
 const minDistance = 5;
 
@@ -36,7 +38,7 @@ export default function LandingPage() {
     defMin: 0,
     atkMax: 10000,
     atkMin: 0,
-    offset:0,
+    offset: 0,
     sort: "az",
   });
   const [loading, setLoading] = useState(false);
@@ -51,7 +53,7 @@ export default function LandingPage() {
       defMax: 10000,
       defMin: 0,
       atkMax: 10000,
-      offset:0,
+      offset: 0,
       atkMin: 0,
       sort: "az",
 
@@ -112,10 +114,11 @@ export default function LandingPage() {
     setViewMode((prevMode) => (prevMode === 'list' ? 'table' : 'list'));
   };
 
+
   const handleLoadMore = async () => {
     try {
       const levels = selectedFilters.level.join(",");
-      setLoading(true)
+      // setLoading(true)
       const response = await axios.get(`${process.env.REACT_APP_API}/cards`, {
         params: {
           name: searchTerm,
@@ -136,7 +139,7 @@ export default function LandingPage() {
       });
       setSearchResults((prevResults) => [...prevResults, ...response.data]);
       setOffset((prevOffset) => prevOffset + limit);
-      setLoading(false)
+      // setLoading(false)
     } catch (error) {
       console.error(error);
     }
@@ -173,21 +176,26 @@ export default function LandingPage() {
           {rowResults.map((result, index) => (
             <td key={index} className="timg">
               <div className="image-container d-flex justify-content-center  tableimg" style={{ position: 'relative' }}>
-                <a
-                  onClick={() => navigateToAnotherPage(result._id)}
-                  style={{ cursor: 'zoom-in' }}
-                >
-                        <img
-                          src={`${process.env.REACT_APP_CARD_IMG_SMALL_API}/${result.id}.jpg`}
-                          className="img-fluid"
-                          alt={result.name}
-                          style={{width:"10rem", borderRadius:"5px"}}
-                          onError={(e) => {
-                            e.target.onerror = null;
-                            e.target.src = carddummysm;
-                          }}
-                        />
-     
+                <a onClick={() => navigateToAnotherPage(result._id)} style={{ cursor: 'zoom-in' }}>
+                  {result ? (
+                    <img
+                      src={`${process.env.REACT_APP_CARD_IMG_SMALL_API}/${result.id}.jpg`}
+                      className="img-fluid"
+                      alt={result.name}
+                      style={{ width: "10rem", borderRadius: "5px" }}
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = carddummysm;
+                      }}
+                    />
+                  ) : (
+                    <img
+                      src={carddummysm}
+                      className="img-fluid"
+                      alt="Dummy"
+                      style={{ width: "10rem", borderRadius: "5px" }}
+                    />
+                  )}
                 </a>
               </div>
             </td>
@@ -198,6 +206,7 @@ export default function LandingPage() {
     }
     return rows;
   };
+
 
   const [atkValue, setAtk] = React.useState([0, 100]);
   const minAtk = atkValue[0] * 100;
@@ -288,28 +297,39 @@ export default function LandingPage() {
     <div>
       <Navbar />
 
-      <div className="container mt-3">
+      <div className="container mt-3 " >
+        <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
+          <Grid item xs={4} sm={8} md={8} >
+            <SwiperComponent />
+          </Grid>
+          <Grid item xs={4} sm={8} md={4} >
+            <div className="bg-danger">xs=2</div>
+          </Grid>
+        </Grid>
 
+      </div>
+      <div className="container mt-3 " style={{ minHeight: "20rem" }}>
+        <h2 className="fw-bold">Most Popular Card</h2>
+      </div>
+
+      <div className="container mt-3">
         <h2 className="fw-bold">Yu-Gi-Oh! Card Database</h2>
         <div className="mb-1">
           <div className="input-group rounded">
             <input
-            id= "searching"
-            name= "searching"
+              id="searching"
+              name="searching"
               type="search"
               className="form-control searching"
               placeholder="Search Yu-Gi-Oh! card database"
               aria-label="Search"
               aria-describedby="search-addon"
               value={searchTerm}
-              onChange={handleInputChange}
-            />
-
+              onChange={handleInputChange} />
             <button className="btn btn-outline-primary" type="button" onClick={handleRandom}>
               Random
             </button>
           </div>
-
           <div className="d-flex justify-content-center fs-2 mt-2">
             <div className="btn-group" role="group">
               <button type="button" className="btn btn-outline-primary" onClick={handleViewToggle}>
@@ -321,7 +341,6 @@ export default function LandingPage() {
               <button type="button" className="btn btn-outline-primary" onClick={resetFilters}>
                 <i className="bi bi-arrow-clockwise"></i>
               </button>
-
             </div>
             <select className="form-select ms-2 w-25" aria-label="Default select example" value={limit} onChange={(e) => setLimit(Number(e.target.value))}>
               <option value={5}>Load 5</option>
@@ -329,9 +348,9 @@ export default function LandingPage() {
               <option value={30}>Load 30</option>
               <option value={50}>Load 50</option>
             </select>
-
-
           </div>
+
+
           {showFilter && (
             <form className={`container mt-3 p-2 filter bg-secondary rounded p-3 ${showFilter ? 'slide-in' : 'slide-out'}`}>
               <div className="row">
@@ -424,7 +443,7 @@ export default function LandingPage() {
                   />
                 </div>
 
-  
+
 
                 <div className="row">
                   <div className="col-12 col-md-6 ">
@@ -502,7 +521,7 @@ export default function LandingPage() {
                           src={`${process.env.REACT_APP_CARD_IMG_SMALL_API}/${result.id}.jpg`}
                           className="img-fluid rounded-start mt-1"
                           alt={result.name}
-                          style={{width:"10rem",borderRadius:"5px"}}
+                          style={{ width: "10rem", borderRadius: "5px" }}
                           onError={(e) => {
                             e.target.onerror = null;
                             e.target.src = carddummysm;
@@ -566,12 +585,6 @@ export default function LandingPage() {
             </div>
           )}
         </div>}
-
-
-
-
-
-
       </div>
     </div>
   );

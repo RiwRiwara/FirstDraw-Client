@@ -61,14 +61,14 @@ function Navbar() {
                   </li>
                   <li>
                     <a className="dropdown-item " onClick={() => handleNavigation("/blogs")} style={{ cursor: "pointer" }}>
-                      Blog
+                      Blog&News
                     </a>
                   </li>
-                  <li>
+                  {/* <li>
                     <a className="dropdown-item " onClick={() => handleNavigation("/news")} style={{ cursor: "pointer" }}>
                       News
                     </a>
-                  </li>
+                  </li> */}
 
                 </ul>
               </li>
@@ -88,7 +88,7 @@ function Navbar() {
                 <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
                   <li>
                     <a className="dropdown-item " onClick={() => handleNavigation("/admin/request")} style={{cursor:"pointer"}}>
-                      Card Request
+                      User Request
                     </a>
                   </li>
                   <li>
@@ -107,8 +107,8 @@ function Navbar() {
                     </a>
                   </li>
                   <li>
-                    <a className="dropdown-item " onClick={() => handleNavigation("/news")} style={{cursor:"pointer"}}>
-                      News
+                    <a className="dropdown-item " onClick={() => handleNavigation("/blogs")} style={{cursor:"pointer"}}>
+                      Blog
                     </a>
                   </li>
                 </ul>

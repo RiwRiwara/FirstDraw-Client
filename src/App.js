@@ -23,7 +23,9 @@ import PrivateRouteAdmin from "./utils/PrivateRoutesAdmin";
 import Permission from "./pages/AdminPage/Permission";
 import NoLogin from "./components/features/NoLogin";
 import Request from "./pages/Request/Request";
-import TemporaryDrawer from "./pages/Request/test";
+import TestPage from "./components/features/test";
+import ErrorPage from "./components/features/errorPage";
+
 
 const MyRoute = () => {
   return (
@@ -38,8 +40,8 @@ const MyRoute = () => {
             <Route path="/news" element={<News />} />
             <Route path="/blogs/:slug" element={<SingleComponent />} />
             <Route path="/cards" element={<LandingPage />} />
-
-            <Route path="/test" element={<TemporaryDrawer />} />
+            <Route path="/test" element={< TestPage/>} />
+          <Route path="/error" element={<ErrorPage />} /> 
 
 
             <Route path="/permission" element={<Permission />} />
@@ -60,7 +62,6 @@ const MyRoute = () => {
               <Route path="/admin/deck" element={<DeckManager />} />
               <Route path="/admin/user" element={<UserManager />} />
             </Route>
-
           </Routes>
         </BrowserRouter>
       </ThemeProvider>

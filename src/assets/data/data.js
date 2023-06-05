@@ -131,3 +131,16 @@ export const levelOptions = [
     { value: -1, label: "New" },
   ];
   
+
+  
+  export const roleOption = [
+    { value: "Admin", label: "Admin" },
+    { value: "User", label: "User" },
+  ];
+
+  export const tierOption = [
+    { value: "Silver", label: "Silverfang" },
+    { value: "Blue", label: "Blue-Eyes" },
+    { value: "Dragon", label: "The Winged Dragon of Ra" },
+  ];
+  

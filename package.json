@@ -35,6 +35,7 @@
     "sharp": "^0.32.1",
     "styled-components": "^5.3.10",
     "sweetalert2": "^11.7.3",
+    "swiper": "^9.3.2",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
