@@ -1,7 +1,7 @@
 import {
     Dialog, List, Stack, FormControl, InputLabel, Snackbar,
     Card, CardActions, CardContent, CardMedia, Select, Tooltip, Zoom,
-    Divider, AppBar, Toolbar, Typography, Paper, Button, MenuItem, Grid, Alert
+    Divider, AppBar, Toolbar, Typography, Paper, Button, MenuItem, Grid, Alert, Backdrop, CircularProgress
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import React, { useState, useEffect } from "react";
@@ -92,34 +92,45 @@ export default function FullScreenDialog(props) {
     };
 
     const deleteItemFromCollection = async (itemId) => {
-
-        try {
-            const response = await axios.put(`${process.env.REACT_APP_API}/collections/${collectionId}`, {
+        setLoading(true)
+            await axios.put(`${process.env.REACT_APP_API}/collections/${collectionId}`, {
                 removeItems: [itemId],
-            });
+            }).then((res) => {
 
-            handleClickAction()
-            setIsOwnCard(false)
+                axios.put(`${process.env.REACT_APP_API}/updatepick?id=${itemId}&action=d`)
+                    .then(response => {
+                        console.log(response);
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
+                handleClickAction()
+                setIsOwnCard(false)
+            }).catch((err) => {
+                console.log(err)
+            })
 
-        } catch (error) {
-            console.error(error);
-        }
-
-
+        setLoading(false)
     };
     const addItemToCollection = async (itemId) => {
-
-        try {
-            const response = await axios.put(`${process.env.REACT_APP_API}/collections/${collectionId}`, {
+        setLoading(true)
+            await axios.put(`${process.env.REACT_APP_API}/collections/${collectionId}`, {
                 addItems: [itemId],
-            });
+            }).then((res) => {
+                axios.put(`${process.env.REACT_APP_API}/updatepick?id=${itemId}&action=i`)
+                    .then(response => {
+                        console.log(response);
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
+                handleClickAction()
+                setIsOwnCard(true)
+            }).catch((err) => {
+                console.log(err)
+            })
 
-            handleClickAction()
-            setIsOwnCard(true)
-
-        } catch (error) {
-            console.error(error);
-        }
+        setLoading(false)
     };
 
     return (
@@ -167,7 +178,7 @@ export default function FullScreenDialog(props) {
                     </Stack>
                 </List>
                 <Divider />
-                <div className='' style={{ pointerEvents: "none",opacity: "0.6"}}>
+                <div className='' style={{ pointerEvents: "none", opacity: "0.6" }}>
                     <h3 className='fw-bold p-2'>Deck Collection</h3>
                     <div>
                         <Card sx={{ maxWidth: '100%', margin: "1rem" }}>
@@ -227,6 +238,13 @@ export default function FullScreenDialog(props) {
                     </Alert>
                 </Snackbar>
             </Dialog>
+
+            <Backdrop
+                sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 9999 }}
+                open={Loading}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
         </div>
     );
 }

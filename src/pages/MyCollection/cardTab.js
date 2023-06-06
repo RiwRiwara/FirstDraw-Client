@@ -105,6 +105,13 @@ function Tab1Component(props) {
                         removeItems: [itemId],
                     });
 
+                    axios.put(`${process.env.REACT_APP_API}/updatepick?id=${itemId}&action=d`)
+                    .then(response => {
+                        console.log(response);
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
                     console.log(response.data);
                     setToggle(!callEffect)
 

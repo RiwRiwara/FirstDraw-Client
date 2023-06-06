@@ -9,7 +9,7 @@ import {
   attributeOptions, sortOption
 } from '../../assets/data/data';
 import makeAnimated from 'react-select/animated';
-import { Typography, Skeleton, Box, Slider, Grid } from '@mui/material';
+import { Typography, Skeleton, Box, Slider, Grid, Divider, Alert } from '@mui/material';
 import { useNavigate } from "react-router-dom";
 import carddummy from "../../assets/images/dummycard.jpg"
 import carddummysm from "../../assets/images/dummycardsmall.jpg"
@@ -300,24 +300,27 @@ export default function LandingPage() {
       <Navbar />
 
       <div className="container mt-3 " >
+
         <Grid container spacing={{ xs: 2, md: 2 }} columns={{ xs: 4, sm: 8, md: 12 }}>
           <Grid item xs={4} sm={8} md={6} >
             <SwiperComponent />
           </Grid>
           <Grid item xs={4} sm={8} md={6} >
-              <LandingMenu/>
+            <LandingMenu />
           </Grid>
         </Grid>
 
       </div>
       <div className="container mt-3 " style={{ minHeight: "20rem" }}>
-        <h2 className="fw-bold">Most Popular Card</h2>
+        <Divider className="mt-3 mb-3" />
+        <h2 className="fw-bold">10 Most Popular Card</h2>
         <div>
           <PoppularCard />
         </div>
       </div>
 
       <div className="container mt-3">
+        <Divider className="mt-3 mb-3" />
         <h2 className="fw-bold">Yu-Gi-Oh! Card Database</h2>
         <div className="mb-1">
           <div className="input-group rounded">

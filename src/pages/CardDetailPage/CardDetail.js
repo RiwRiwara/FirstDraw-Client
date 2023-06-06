@@ -11,6 +11,7 @@ import * as custom from "./customComponent";
 import Grid from '@mui/material/Unstable_Grid2';
 import FullScreenDialog from './addCollection';
 import carddummy from "../../assets/images/dummycard.jpg"
+import levelIcon from "../../assets/icons/level.png"
 
 function CardDetail(props) {
 
@@ -95,20 +96,23 @@ function CardDetail(props) {
                                             {card.level && (
                                                 <Grid xs={2} sm={4} md={4} key={4}>
                                                     <custom.Item className='item-info bg-primary '>
+
                                                         <p className='text-white'>Level</p>
-                                                        <span className='fw-bold sub-info text-white'>{card.level}</span>
+                                                        <span className='fw-bold sub-info text-white'>{card.level} &nbsp;</span>
+                                                        <img style={{widows:"1.1rem", height:"1.1rem"}} src={levelIcon} />
                                                     </custom.Item>
                                                 </Grid>
                                             )}
-                                            {card.atk && (
+                                            {(card.atk || card.atk ===0) && (
                                                 <Grid xs={2} sm={4} md={4} key={5}>
                                                     <custom.Item className='item-info bg-primary '>
                                                         <p className='text-white'>Attack</p>
                                                         <span className='fw-bold sub-info text-white'>{card.atk}</span>
+                            
                                                     </custom.Item>
                                                 </Grid>
                                             )}
-                                            {card.def && (
+                                            {(card.def || card.def===0) && (
                                                 <Grid xs={2} sm={4} md={4} key={6}>
                                                     <custom.Item className='item-info bg-primary '>
                                                         <p className='text-white'>Defense</p>

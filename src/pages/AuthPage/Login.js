@@ -64,13 +64,13 @@ function Login() {
                             />
                         </div>
                     </div>
-                    <div className="mb-3 form-check">
+                    {/* <div className="mb-3 form-check">
                         <input
                             type="checkbox"
                             className="form-check-input"
                             id="" />
                         <label className="form-check-label" for="">Remember me</label>
-                    </div>
+                    </div> */}
                     <button type="submit" className="btn btn-primary w-100">Login</button>
                     <a type='button' className='btn' onClick={adminLogin}>admin</a>
                     <a type='button' className='btn' onClick={userLogin}>user</a>
