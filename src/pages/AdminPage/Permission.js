@@ -10,7 +10,7 @@ const Permission = () => {
   return (
     <>
       <Navbar />
-      <div className="container p-3">
+      <div className="container p-3"  style={{ paddingTop: "5rem" }}>
        <p> You don't have permission to reach this page!</p>
       </div>
     </>

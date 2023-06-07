@@ -12,7 +12,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function MyProfile() {
   const user = JSON.parse(localStorage.getItem("user")).data;
-  const [cardCollection, setCardCollection] = useState("No data")
+  const [cardCollection, setCardCollection] = useState([])
   const navigate = useNavigate()
   
 useEffect(() => {
@@ -180,7 +180,7 @@ useEffect(() => {
   return (
     <div>
       <Navbar />
-      <div className=" pt-3 rounded-1">
+      <div className=" rounded-1"  style={{ paddingTop: "5rem" }}>
         <div className="container">
           <h1 className="d-flex justify-content-center fw-bold mb-3">
             My Profile &nbsp;<i className="m bi bi-person-vcard"></i>

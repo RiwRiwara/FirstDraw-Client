@@ -41,7 +41,7 @@ const MyCollection = () => {
   return (
     <>
       <Navbar />
-      <div className="container p-3">
+      <div className="container "  style={{ paddingTop: "5rem" }}>
         {/* <div className="container p-3">
           <Box sx={{ width: '100%' }}>
             <Tabs

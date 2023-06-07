@@ -11,7 +11,7 @@ import {
 import makeAnimated from 'react-select/animated';
 import {
   Typography, Skeleton, Slider, Grid, Box, Link, Accordion, Alert, Zoom, Tooltip, IconButton,
-  AccordionDetails, AccordionSummary, Divider, TextField, Snackbar, ToggleButton, ToggleButtonGroup, AlertTitle
+  AccordionDetails, AccordionSummary, Divider, TextField, Snackbar, ToggleButton, ToggleButtonGroup, AlertTitle, Backdrop, SpeedDial, SpeedDialAction, SpeedDialIcon
 } from '@mui/material';
 import { Co2Sharp, DeleteOutline, Refresh } from '@mui/icons-material';
 import { useNavigate, useLocation } from "react-router-dom";
@@ -29,9 +29,18 @@ import carddummysm from "../../assets/images/dummycardsmall.jpg"
 
 const animatedComponents = makeAnimated();
 const minDistance = 5;
+const actions = [
+  { icon: <DeleteOutline />, name: 'Copy' },
+  { icon: <DeleteOutline />, name: 'Save' },
+  { icon: <DeleteOutline />, name: 'Print' },
+  { icon: <DeleteOutline />, name: 'Share' },
+];
 
 
 export default function CardManager(props) {
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
@@ -52,7 +61,7 @@ export default function CardManager(props) {
     defMin: 0,
     atkMax: 10000,
     atkMin: 0,
-    offset:0,
+    offset: 0,
     sort: "az",
   });
 
@@ -97,7 +106,7 @@ export default function CardManager(props) {
       defMax: 10000,
       defMin: 0,
       atkMax: 10000,
-      offset:0,
+      offset: 0,
       atkMin: 0,
       sort: "az",
 
@@ -123,7 +132,7 @@ export default function CardManager(props) {
     def: 0,
     atk: 0,
     desc: "",
-    offset:0
+    offset: 0
   });
   const resetToDefault = () => {
     setCarddata({
@@ -136,7 +145,7 @@ export default function CardManager(props) {
       def: 0,
       atk: 0,
       desc: "",
-      offset:0
+      offset: 0
     });
     document.getElementById("formName").value = ""
     document.getElementById("formDef").value = ""
@@ -200,7 +209,7 @@ export default function CardManager(props) {
         break;
       case "race":
         updatedCardData = { ...updatedCardData, race: value };
-        // break;
+      // break;
       case "frameType":
         updatedCardData = { ...updatedCardData, frameType: value };
         break;
@@ -326,7 +335,7 @@ export default function CardManager(props) {
           level: levels,
           offset: offset,
           limit: limit,
-          sort :selectedFilters.sort
+          sort: selectedFilters.sort
 
         },
       });
@@ -355,7 +364,7 @@ export default function CardManager(props) {
                   style={{ cursor: 'pointer' }}
                 >
                   <img
-                    src={`${process.env.REACT_APP_CARD_IMG_SMALL_API}/${result.id}.jpg`}
+                    src={`${process.env.REACT_APP_CARD_IMG_SMALL_API}/${result.id}.jpg?${new Date().getTime()}`}
                     alt={result.name}
                     className="img-fluid"
                     onError={(e) => {
@@ -515,12 +524,13 @@ export default function CardManager(props) {
     document.getElementById("formDef").value = newCardData.def
     document.getElementById("formAtk").value = newCardData.atk
     document.getElementById("formDesc").value = newCardData.desc
-    setSelectedImage(`${process.env.REACT_APP_CARD_IMG_API}/${newCardData.id}.jpg`)
+    setSelectedImage(`${process.env.REACT_APP_CARD_IMG_API}/${newCardData.id}.jpg?${new Date().getTime()} `)
     setIsEdit(true);
     window.scrollTo(0, 0);
   }
 
 
+  // TODO
   const updateOnclick = () => {
     Swal.fire({
       title: 'Are you sure?',
@@ -532,12 +542,34 @@ export default function CardManager(props) {
       confirmButtonText: 'Confirm'
     }).then(async (result) => {
       if (result.isConfirmed) {
-        axios.put(`${process.env.REACT_APP_API}/cards/${cardData._id}`, cardData).then((response) => {
+
+        axios.put(`${process.env.REACT_APP_API}/cards/${cardData._id}`, cardData).then((res) => {
+
+          if (imgFile && file) {
+            uploadImageToAzure(
+              res.data.id,
+              imgFile,
+              file,
+              "cardimgsmall",
+              cardSize[1].width,
+              cardSize[1].height
+            )
+
+            uploadImageToAzure(
+              res.data.id,
+              imgFile,
+              file,
+              "cardimgs",
+              cardSize[0].width,
+              cardSize[0].height
+            )
+          }
           Swal.fire(
             'Complete',
-            `Card: ${cardData.name}`,
+            `Update Card: ${cardData.name}`,
             'success'
           )
+
           handleChangeToggle()
         }).catch((err) => {
           console.error('Error updating card:', err);
@@ -553,545 +585,550 @@ export default function CardManager(props) {
 
   }
   const CreatebyRequest = () => {
-    if(!handleFormSubmit()){
-      let res = {data:"APPROVE", id:state.res._id}
-      navigate("/admin/request", {state:{res}});
+    if (!handleFormSubmit()) {
+      let res = { data: "APPROVE", id: state.res._id }
+      navigate("/admin/request", { state: { res } });
     }
-    
+
   }
 
   return (
     <div >
       <Navbar />
-      {(state && state.res && state.res.cardReq) ? (
-        <Alert severity="warning">
-          <AlertTitle>Warning</AlertTitle>
-          This action from request — <strong>check it out</strong>
-        </Alert>
-      ) : (<></>)}
+      <div style={{ paddingTop: "5rem" }}>
+        {(state && state.res && state.res.cardReq) ? (
+          <Alert severity="warning">
+            <AlertTitle>Warning</AlertTitle>
+            This action from request — <strong>check it out</strong>
+          </Alert>
+        ) : (<></>)}
 
-      <div className="container mt-3 min-vh-100">
-        <PageTitle title={!(state && state.res && state.res.cardReq) ? ("Card Manager") : ("Card Manager - By requested")} />
-        <div >
-          <div className='container mt-3 mb-3'>
-            <ToggleButtonGroup
-              className="m-1 d-flex justify-content-center"
-              value={toggleValue}
-              exclusive
-              onChange={handleChangeToggle}
-            >
-              <ToggleButton
-                className={`fw-bold fs-5 text-primary ${toggleValue === "createCard" ? "bg-primary text-white" : "bg-secondary "}`}
-                value="createCard">Create Card</ToggleButton>
-              <ToggleButton
-                className={`fw-bold fs-5 text-primary ${toggleValue === "updateCard" ? "bg-primary text-white" : "bg-secondary"}`} v
-                alue="updateCard">Update Card</ToggleButton>
-            </ToggleButtonGroup>
+        <div className="container mt-3 min-vh-100">
+          <PageTitle title={!(state && state.res && state.res.cardReq) ? ("Card Manager") : ("Card Manager - By requested")} />
+          <div >
+            <div className='container mt-3 mb-3'>
+              <ToggleButtonGroup
+                className="m-1 d-flex justify-content-center"
+                value={toggleValue}
+                exclusive
+                onChange={handleChangeToggle}
+              >
+                <ToggleButton
+                  className={`fw-bold fs-5 text-primary ${toggleValue === "createCard" ? "bg-primary text-white" : "bg-secondary "}`}
+                  value="createCard">Create Card</ToggleButton>
+                <ToggleButton
+                  className={`fw-bold fs-5 text-primary ${toggleValue === "updateCard" ? "bg-primary text-white" : "bg-secondary"}`}
+                  value="updateCard">Update Card</ToggleButton>
+              </ToggleButtonGroup>
 
-            <Divider />
+              <Divider />
 
-            <div style={{ position: 'relative' }}>
-              {!isEdit && toggleValue === "updateCard" && (
-                <div className="backdrop" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                  onClick={() => { window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }); }}>
-                  <span className="centered-text">Please select Card</span>
-                </div>
-              )}
+              <div style={{ position: 'relative' }}>
+                {!isEdit && toggleValue === "updateCard" && (
+                  <div className="backdrop" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                    onClick={() => { window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }); }}>
+                    <span className="centered-text">Please select Card</span>
+                  </div>
+                )}
 
-              <div className="row g-3 mt-3">
-                <div className='col-12 col-md-4 d-flex justify-content-center'>
-                  <div className="row d-flex justify-content-center">
-                    <img
-                      src={selectedImage}
-                      className="img-fluid rounded-start mt-1 cardImgAdmin "
-                      alt={"Name"}
-                      onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.src = carddummysm;
-                      }}
-                      style={{ "width": "75%", borderRadius: "1rem" }}
-                    />
-                    <input
-                      className="form-control "
-                      type="file"
-                      id="formFile"
-                      accept="image/*"
-                      onChange={handleImageUpload}
-                      style={{ "width": "70%", "marginTop": "1rem" }}
-                    />
+                <div className="row g-3 mt-3">
+                  <div className='col-12 col-md-4 d-flex justify-content-center'>
+                    <div className="row d-flex justify-content-center">
+                      <img
+                        src={selectedImage}
+                        className="img-fluid rounded-start mt-1 cardImgAdmin "
+                        alt={"Name"}
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = carddummysm;
+                        }}
+                        style={{ "width": "75%", borderRadius: "1rem" }}
+                      />
+                      <input
+                        className="form-control "
+                        type="file"
+                        id="formFile"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        style={{ "width": "70%", "marginTop": "1rem" }}
+                      />
+                    </div>
+                  </div>
+                  <div className='col-12 col-md-8'>
+
+                    <div className='row' >
+                      <Box sx={{ flexGrow: 1 }} className="mt-2" >
+                        <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
+                          <Grid xs={2} sm={4} md={4} key={1}>
+                            <custom.Item className='item-info '>
+                              <p className="fw-bold">Card name</p>
+                              <input
+                                type="text"
+                                className="form-control"
+                                name="name"
+                                id="formName"
+                                onChange={FormInputChange}
+                                aria-describedby="nameHelpId"
+                                placeholder="name" />
+                            </custom.Item>
+                          </Grid>
+                          <Grid xs={2} sm={4} md={4} key={2}>
+                            <custom.Item className='item-info '>
+                              <p className="fw-bold">Type</p>
+                              <Select
+                                className="basic-single"
+                                isSearchable={true}
+                                classNamePrefix="select"
+                                defaultValue={typeOptions[0]}
+                                menuPortalTarget={document.body}
+                                name="type"
+                                value={typeOptions.find(option => option.value === cardData.type)}
+                                options={typeOptions}
+                                styles={customStyles.customStyles}
+                                onChange={FormInputChangeSelection}
+                              />
+                            </custom.Item>
+                          </Grid>
+                          <Grid xs={2} sm={4} md={4} key={3}>
+                            <custom.Item className='item-info '>
+                              <p className="fw-bold">FrameType</p>
+                              <Select
+                                className="basic-single"
+                                isSearchable={true}
+                                classNamePrefix="select"
+                                defaultValue={frameOptions[0]}
+                                menuPortalTarget={document.body}
+                                name="frameType"
+                                options={frameOptions}
+                                styles={customStyles.customStyles}
+                                value={frameOptions.find(option => option.value === cardData.frameType)}
+                                onChange={FormInputChangeSelection}
+                              />
+                            </custom.Item>
+                          </Grid>
+                          <Grid xs={2} sm={4} md={4} key={4}>
+                            <custom.Item className='item-info '>
+                              <p className="fw-bold">Race</p>
+                              <Select
+                                className="basic-single"
+                                isSearchable={true}
+                                classNamePrefix="select"
+                                defaultValue={raceOptions[0]}
+                                menuPortalTarget={document.body}
+                                name="race"
+                                options={raceOptions}
+                                styles={customStyles.customStyles}
+                                value={raceOptions.find(option => option.value === cardData.race)}
+                                onChange={FormInputChangeSelection}
+                              />
+                            </custom.Item>
+                          </Grid>
+                          <Grid xs={2} sm={4} md={4} key={5}>
+                            <custom.Item className='item-info'>
+                              <p className="fw-bold">Attribute</p>
+                              <Select
+                                className="basic-single"
+                                isSearchable={true}
+                                classNamePrefix="select"
+                                defaultValue={attributeOptions[0]}
+                                menuPortalTarget={document.body}
+                                value={attributeOptions.find(option => option.value === cardData.attribute)}
+                                name="attribute"
+                                options={attributeOptions}
+                                styles={customStyles.customStyles}
+                                onChange={FormInputChangeSelection}
+                              />
+                            </custom.Item>
+                          </Grid>
+                          <Grid xs={2} sm={4} md={4} key={6}>
+                            <custom.Item className='item-info'>
+                              <p className="fw-bold">Level</p>
+                              <Select
+                                className="basic-single"
+                                isSearchable={true}
+                                classNamePrefix="select"
+                                defaultValue={levelOptions[1]}
+                                menuPortalTarget={document.body}
+                                value={levelOptions.find(option => option.value === cardData.levelOptions)}
+                                name="level"
+                                options={levelOptions}
+                                styles={customStyles.customStyles}
+                                onChange={FormInputChangeSelection}
+                              />
+                            </custom.Item>
+
+                          </Grid>
+                          <Grid xs={2} sm={4} md={4} key={7}>
+                            <custom.Item className='item-info '>
+                              <p className="fw-bold">Attack</p>
+                              <input type="text" className="form-control"
+                                name="atk"
+                                id="formAtk"
+                                onChange={FormInputChange}
+                                aria-describedby="atkHelpId" placeholder="attack value" />
+
+                            </custom.Item>
+                          </Grid>
+                          <Grid xs={2} sm={4} md={4} key={8}>
+                            <custom.Item className='item-info  '>
+                              <p className="fw-bold">Defense</p>
+                              <input type="text" className="form-control"
+                                name="def"
+                                id="formDef"
+                                onChange={FormInputChange}
+                                aria-describedby="defHelpId" placeholder="defense value" />
+
+                            </custom.Item>
+                          </Grid>
+                          <Grid xs={12} sm={12} md={12} key={9}>
+                            <custom.Item className='item-info '>
+                              <p className="fw-bold">Card Description</p>
+                              <textarea
+                                placeholder="card detail"
+                                className="form-control"
+                                name="desc"
+                                id="formDesc"
+                                onChange={FormInputChange}
+                                rows="4"
+                              ></textarea>
+
+                            </custom.Item>
+                          </Grid>
+                        </Grid>
+                      </Box>
+                    </div>
+
                   </div>
                 </div>
-                <div className='col-12 col-md-8'>
 
-                  <div className='row' >
-                    <Box sx={{ flexGrow: 1 }} className="mt-2" >
-                      <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
-                        <Grid xs={2} sm={4} md={4} key={1}>
-                          <custom.Item className='item-info '>
-                            <p className="fw-bold">Card name</p>
-                            <input
-                              type="text"
-                              className="form-control"
-                              name="name"
-                              id="formName"
-                              onChange={FormInputChange}
-                              aria-describedby="nameHelpId"
-                              placeholder="name" />
-                          </custom.Item>
-                        </Grid>
-                        <Grid xs={2} sm={4} md={4} key={2}>
-                          <custom.Item className='item-info '>
-                            <p className="fw-bold">Type</p>
-                            <Select
-                              className="basic-single"
-                              isSearchable={true}
-                              classNamePrefix="select"
-                              defaultValue={typeOptions[0]}
-                              menuPortalTarget={document.body}
-                              name="type"
-                              value={typeOptions.find(option => option.value === cardData.type)}
-                              options={typeOptions}
-                              styles={customStyles.customStyles}
-                              onChange={FormInputChangeSelection}
-                            />
-                          </custom.Item>
-                        </Grid>
-                        <Grid xs={2} sm={4} md={4} key={3}>
-                          <custom.Item className='item-info '>
-                            <p className="fw-bold">FrameType</p>
-                            <Select
-                              className="basic-single"
-                              isSearchable={true}
-                              classNamePrefix="select"
-                              defaultValue={frameOptions[0]}
-                              menuPortalTarget={document.body}
-                              name="frameType"
-                              options={frameOptions}
-                              styles={customStyles.customStyles}
-                              value={frameOptions.find(option => option.value === cardData.frameType)}
-                              onChange={FormInputChangeSelection}
-                            />
-                          </custom.Item>
-                        </Grid>
-                        <Grid xs={2} sm={4} md={4} key={4}>
-                          <custom.Item className='item-info '>
-                            <p className="fw-bold">Race</p>
-                            <Select
-                              className="basic-single"
-                              isSearchable={true}
-                              classNamePrefix="select"
-                              defaultValue={raceOptions[0]}
-                              menuPortalTarget={document.body}
-                              name="race"
-                              options={raceOptions}
-                              styles={customStyles.customStyles}
-                              value={raceOptions.find(option => option.value === cardData.race)}
-                              onChange={FormInputChangeSelection}
-                            />
-                          </custom.Item>
-                        </Grid>
-                        <Grid xs={2} sm={4} md={4} key={5}>
-                          <custom.Item className='item-info'>
-                            <p className="fw-bold">Attribute</p>
-                            <Select
-                              className="basic-single"
-                              isSearchable={true}
-                              classNamePrefix="select"
-                              defaultValue={attributeOptions[0]}
-                              menuPortalTarget={document.body}
-                              value={attributeOptions.find(option => option.value === cardData.attribute)}
-                              name="attribute"
-                              options={attributeOptions}
-                              styles={customStyles.customStyles}
-                              onChange={FormInputChangeSelection}
-                            />
-                          </custom.Item>
-                        </Grid>
-                        <Grid xs={2} sm={4} md={4} key={6}>
-                          <custom.Item className='item-info'>
-                            <p className="fw-bold">Level</p>
-                            <Select
-                              className="basic-single"
-                              isSearchable={true}
-                              classNamePrefix="select"
-                              defaultValue={levelOptions[1]}
-                              menuPortalTarget={document.body}
-                              value={levelOptions.find(option => option.value === cardData.levelOptions)}
-                              name="level"
-                              options={levelOptions}
-                              styles={customStyles.customStyles}
-                              onChange={FormInputChangeSelection}
-                            />
-                          </custom.Item>
-                        </Grid>
-                        <Grid xs={2} sm={4} md={4} key={7}>
-                          <custom.Item className='item-info '>
-                            <p className="fw-bold">Attack</p>
-                            <input type="text" className="form-control"
-                              name="atk"
-                              id="formAtk"
-                              onChange={FormInputChange}
-                              aria-describedby="atkHelpId" placeholder="attack value" />
+                {toggleValue === "createCard" ? (
+                  <>
+                    {state && state.res && state.res.cardReq ? (
+                      <button type="button" className="btn btn-primary w-100 mt-4" onClick={CreatebyRequest}>Create for Requested</button>
+                    ) : (
+                      <button type="button" className="btn btn-primary w-100 mt-4" onClick={handleFormSubmit}>Create Card</button>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <button type="button" className="btn btn-primary w-100 mt-4" onClick={updateOnclick}>Update Card</button>
+                  </>
+                )}
 
-                          </custom.Item>
-                        </Grid>
-                        <Grid xs={2} sm={4} md={4} key={8}>
-                          <custom.Item className='item-info  '>
-                            <p className="fw-bold">Defense</p>
-                            <input type="text" className="form-control"
-                              name="def"
-                              id="formDef"
-                              onChange={FormInputChange}
-                              aria-describedby="defHelpId" placeholder="defense value" />
 
-                          </custom.Item>
-                        </Grid>
-                        <Grid xs={12} sm={12} md={12} key={9}>
-                          <custom.Item className='item-info '>
-                            <p className="fw-bold">Card Description</p>
-                            <textarea
-                              placeholder="card detail"
-                              className="form-control"
-                              name="desc"
-                              id="formDesc"
-                              onChange={FormInputChange}
-                              rows="4"
-                            ></textarea>
-
-                          </custom.Item>
-                        </Grid>
-                      </Grid>
-                    </Box>
-                  </div>
-
-                </div>
               </div>
-
-              {toggleValue === "createCard" ? (
-                <>
-                  {state && state.res && state.res.cardReq ? (
-                    <button type="button" className="btn btn-primary w-100 mt-4" onClick={CreatebyRequest}>Create for Requested</button>
-                  ) : (
-                    <button type="button" className="btn btn-primary w-100 mt-4" onClick={handleFormSubmit}>Create Card</button>
-                  )}
-                </>
-              ) : (
-                <>
-                  <button type="button" className="btn btn-primary w-100 mt-4" onClick={updateOnclick}>Update Card</button>
-                </>
-              )}
-
-
             </div>
           </div>
-        </div>
 
-        <Accordion className="mb-2 mt-2" defaultExpanded={(state && state.res && state.res.cardReq.name) ? (true) : (false)}>
-          <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
-            aria-controls="panel1a-content"
-            id="panel1a-header"
-          >
-            <h3 className=" fw-bold text-center">Select Cards to update & delete</h3>
-          </AccordionSummary>
-          <AccordionDetails>
-            <div className="mb-1">
-              <div className="input-group rounded">
-                <input
-                  type="search"
-                  className="form-control searching"
-                  placeholder="Search Yu-Gi-Oh! card database"
-                  aria-label="Search"
-                  aria-describedby="search-addon"
-                  value={searchTerm}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="d-flex justify-content-center fs-2 mt-2">
-                <div className="btn-group" role="group">
-                  <button type="button" className="btn btn-outline-primary" onClick={handleViewToggle}>
-                    <i className={viewMode === 'list' ? 'bi bi-table' : 'bi bi-list-ul'}></i> {viewMode === 'list' ? 'Table View' : 'List View'}
-                  </button>
-                  <button type="button" className="btn btn-outline-primary" onClick={handleFilterToggle}>
-                    <i className="bi bi-funnel-fill"></i> Filter
-                  </button>
-                  <button type="button" className="btn btn-outline-primary" onClick={resetFilters}>
-                    <i className="bi bi-arrow-clockwise"></i>
-                  </button>
+          <Accordion className="mb-2 mt-2" defaultExpanded={(state && state.res && state.res.cardReq.name) ? (true) : (false)}>
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel1a-content"
+              id="panel1a-header"
+            >
+              <h3 className=" fw-bold text-center">Select Cards to update & delete</h3>
+            </AccordionSummary>
+            <AccordionDetails>
+              <div className="mb-1">
+                <div className="input-group rounded">
+                  <input
+                    type="search"
+                    className="form-control searching"
+                    placeholder="Search Yu-Gi-Oh! card database"
+                    aria-label="Search"
+                    aria-describedby="search-addon"
+                    value={searchTerm}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div className="d-flex justify-content-center fs-2 mt-2">
+                  <div className="btn-group" role="group">
+                    <button type="button" className="btn btn-outline-primary" onClick={handleViewToggle}>
+                      <i className={viewMode === 'list' ? 'bi bi-table' : 'bi bi-list-ul'}></i> {viewMode === 'list' ? 'Table View' : 'List View'}
+                    </button>
+                    <button type="button" className="btn btn-outline-primary" onClick={handleFilterToggle}>
+                      <i className="bi bi-funnel-fill"></i> Filter
+                    </button>
+                    <button type="button" className="btn btn-outline-primary" onClick={resetFilters}>
+                      <i className="bi bi-arrow-clockwise"></i>
+                    </button>
+
+                  </div>
+                  <select className="form-select ms-2 w-25" aria-label="Default select example" value={limit} onChange={(e) => setLimit(Number(e.target.value))}>
+                    <option value={5}>Load 5</option>
+                    <option value={10}>Load 10</option>
+                    <option value={30}>Load 30</option>
+                    <option value={50}>Load 50</option>
+                  </select>
 
                 </div>
-                <select className="form-select ms-2 w-25" aria-label="Default select example" value={limit} onChange={(e) => setLimit(Number(e.target.value))}>
-                  <option value={5}>Load 5</option>
-                  <option value={10}>Load 10</option>
-                  <option value={30}>Load 30</option>
-                  <option value={50}>Load 50</option>
-                </select>
-
-              </div>
-              {showFilter && (
-                <form className={`container mt-3 p-2 filter bg-secondary rounded p-3 ${showFilter ? 'slide-in' : 'slide-out'}`}>
-                  <div className="row">
-                    <div className="col-12 col-md-2 sel">
-                      <Select
-                        className="basic-single"
-                        isSearchable={true}
-                        classNamePrefix="select"
-                        defaultValue={typeOptions[0]}
-                        menuPortalTarget={document.body}
-                        name="type"
-                        value={typeOptions.find(option => option.value === selectedFilters.type)}
-                        options={typeOptions}
-                        styles={customStyles.customStyles}
-                        onChange={handleFilterChange}
-                      />
-                    </div>
-                    <div className="col-12 col-md-2 sel">
-                      <Select
-                        className="basic-single"
-                        isSearchable={true}
-                        classNamePrefix="select"
-                        defaultValue={raceOptions[0]}
-                        menuPortalTarget={document.body}
-                        name="race"
-                        value={raceOptions.find(option => option.value === selectedFilters.race)}
-                        options={raceOptions}
-                        styles={customStyles.customStyles}
-                        onChange={handleFilterChange}
-                      />
-                    </div>
-                    <div className="col-12 col-md-2 sel">
-                      <Select
-                        className="basic-single"
-                        isSearchable={true}
-                        classNamePrefix="select"
-                        defaultValue={frameOptions[0]}
-                        menuPortalTarget={document.body}
-                        name="FrameType"
-                        value={frameOptions.find(option => option.value === selectedFilters.frameType)}
-                        options={frameOptions}
-                        styles={customStyles.customStyles}
-                        onChange={handleFilterChange}
-                      />
-                    </div>
-                    <div className="col-12 col-md-2 sel">
-                      <Select
-                        className="basic-single"
-                        isSearchable={true}
-                        classNamePrefix="select"
-                        defaultValue={attributeOptions[0]}
-                        menuPortalTarget={document.body}
-                        value={attributeOptions.find(option => option.value === selectedFilters.attribute)}
-                        name="attribute"
-                        options={attributeOptions}
-                        styles={customStyles.customStyles}
-                        onChange={handleFilterChange}
-                      />
-                    </div>
-                    <div className="col-12 col-md-4 sel">
-                      <Select
-                        closeMenuOnSelect={false}
-                        components={animatedComponents}
-                        defaultValue={[levelOptions[0]]}
-                        menuPortalTarget={document.body}
-                        isMulti
-                        value={levelOptions.filter(option => selectedFilters.level.includes(option.value))}
-                        name="levels"
-                        options={levelOptions}
-                        className="basic-multi-select sel"
-                        classNamePrefix="select"
-                        styles={customStyles.customStyles}
-                        onChange={handleFilterChange}
-                      />
-                    </div>
-                    <div className="col-12 col-md-2 sel">
-                      <Select
-                        className="basic-single"
-                        isSearchable={true}
-                        classNamePrefix="select"
-                        defaultValue={[sortOption[0]]}
-                        menuPortalTarget={document.body}
-                        name="sortBy"
-                        value={sortOption.filter(option => option.value === selectedFilters.sort)}
-                        options={sortOption}
-                        styles={customStyles.customStyles}
-                        onChange={handleFilterChange}
-                      />
-
-
-                    </div>
+                {showFilter && (
+                  <form className={`container mt-3 p-2 filter bg-secondary rounded p-3 ${showFilter ? 'slide-in' : 'slide-out'}`}>
                     <div className="row">
-                      <div className="col-12 col-md-6 ">
-                        <Typography variant="h6" gutterBottom>
-                          Attack
-                        </Typography>
-                        <Box display="flex" alignItems="center">
-                          <Box className="flex-start" marginRight={2}>{minAtk}</Box>
-                          <Slider
-                            aria-label="ATK"
-                            value={atkValue}
-                            onChange={handleChangeAtk}
-                            disableSwap
-                          />
-                          <Box className="flex-end" marginLeft={2}>{maxAtk}</Box>
-                        </Box>
+                      <div className="col-12 col-md-2 sel">
+                        <Select
+                          className="basic-single"
+                          isSearchable={true}
+                          classNamePrefix="select"
+                          defaultValue={typeOptions[0]}
+                          menuPortalTarget={document.body}
+                          name="type"
+                          value={typeOptions.find(option => option.value === selectedFilters.type)}
+                          options={typeOptions}
+                          styles={customStyles.customStyles}
+                          onChange={handleFilterChange}
+                        />
                       </div>
-                      <div className="col-12 col-md-6 ">
-                        <Typography variant="h6" gutterBottom>
-                          Defense
-                        </Typography>
-                        <Box display="flex" alignItems="center">
-                          <Box className="flex-start" marginRight={2}>{minDef}</Box>
-                          <Slider
-                            aria-label="ATK"
-                            value={defValue}
-                            onChange={handleChangeDef}
-                            disableSwap
-                          />
-                          <Box className="flex-end" marginLeft={2}>{maxDef}</Box>
-                        </Box>
+                      <div className="col-12 col-md-2 sel">
+                        <Select
+                          className="basic-single"
+                          isSearchable={true}
+                          classNamePrefix="select"
+                          defaultValue={raceOptions[0]}
+                          menuPortalTarget={document.body}
+                          name="race"
+                          value={raceOptions.find(option => option.value === selectedFilters.race)}
+                          options={raceOptions}
+                          styles={customStyles.customStyles}
+                          onChange={handleFilterChange}
+                        />
+                      </div>
+                      <div className="col-12 col-md-2 sel">
+                        <Select
+                          className="basic-single"
+                          isSearchable={true}
+                          classNamePrefix="select"
+                          defaultValue={frameOptions[0]}
+                          menuPortalTarget={document.body}
+                          name="FrameType"
+                          value={frameOptions.find(option => option.value === selectedFilters.frameType)}
+                          options={frameOptions}
+                          styles={customStyles.customStyles}
+                          onChange={handleFilterChange}
+                        />
+                      </div>
+                      <div className="col-12 col-md-2 sel">
+                        <Select
+                          className="basic-single"
+                          isSearchable={true}
+                          classNamePrefix="select"
+                          defaultValue={attributeOptions[0]}
+                          menuPortalTarget={document.body}
+                          value={attributeOptions.find(option => option.value === selectedFilters.attribute)}
+                          name="attribute"
+                          options={attributeOptions}
+                          styles={customStyles.customStyles}
+                          onChange={handleFilterChange}
+                        />
+                      </div>
+                      <div className="col-12 col-md-4 sel">
+                        <Select
+                          closeMenuOnSelect={false}
+                          components={animatedComponents}
+                          defaultValue={[levelOptions[0]]}
+                          menuPortalTarget={document.body}
+                          isMulti
+                          value={levelOptions.filter(option => selectedFilters.level.includes(option.value))}
+                          name="levels"
+                          options={levelOptions}
+                          className="basic-multi-select sel"
+                          classNamePrefix="select"
+                          styles={customStyles.customStyles}
+                          onChange={handleFilterChange}
+                        />
+
+                      </div>
+
+                      <div className="col-12 col-md-2 sel">
+                        <Select
+                          className="basic-single"
+                          isSearchable={true}
+                          classNamePrefix="select"
+                          defaultValue={[sortOption[0]]}
+                          menuPortalTarget={document.body}
+                          name="sortBy"
+                          value={sortOption.filter(option => option.value === selectedFilters.sort)}
+                          options={sortOption}
+                          styles={customStyles.customStyles}
+                          onChange={handleFilterChange}
+                        />
+
+
+                      </div>
+                      <div className="row">
+                        <div className="col-12 col-md-6 ">
+                          <Typography variant="h6" gutterBottom>
+                            Attack
+                          </Typography>
+                          <Box display="flex" alignItems="center">
+                            <Box className="flex-start" marginRight={2}>{minAtk}</Box>
+                            <Slider
+                              aria-label="ATK"
+                              value={atkValue}
+                              onChange={handleChangeAtk}
+                              disableSwap
+                            />
+                            <Box className="flex-end" marginLeft={2}>{maxAtk}</Box>
+                          </Box>
+                        </div>
+                        <div className="col-12 col-md-6 ">
+                          <Typography variant="h6" gutterBottom>
+                            Defense
+                          </Typography>
+                          <Box display="flex" alignItems="center">
+                            <Box className="flex-start" marginRight={2}>{minDef}</Box>
+                            <Slider
+                              aria-label="ATK"
+                              value={defValue}
+                              onChange={handleChangeDef}
+                              disableSwap
+                            />
+                            <Box className="flex-end" marginLeft={2}>{maxDef}</Box>
+                          </Box>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </form>
-              )}
-            </div>
-            <div>
-              {loading ? (
-                <div className="card mb-3 p-1">
-                  <div className="row g-0">
-                    <div className="col-md-4 col-12 w-auto fcol">
-                      <Skeleton variant="rectangular" width={170} height={210} />
-                    </div>
-                    <div className="col-md-10 col-12">
-                      <Skeleton />
-                      <div className="card-body">
-                        <hr className="border-1 border-top border-primary" />
-                        <div className="">
+                  </form>
+                )}
+              </div>
+              <div>
+                {loading ? (
+                  <div className="card mb-3 p-1">
+                    <div className="row g-0">
+                      <div className="col-md-4 col-12 w-auto fcol">
+                        <Skeleton variant="rectangular" width={170} height={210} />
+                      </div>
+                      <div className="col-md-10 col-12">
+                        <Skeleton />
+                        <div className="card-body">
+                          <hr className="border-1 border-top border-primary" />
+                          <div className="">
+                            <Skeleton animation="wave" />
+                          </div>
+                          <hr className="border-1 border-top border-primary" />
                           <Skeleton animation="wave" />
                         </div>
-                        <hr className="border-1 border-top border-primary" />
-                        <Skeleton animation="wave" />
                       </div>
                     </div>
                   </div>
-                </div>
-              ) : !loading && searchResults.length === 0 ? (
-                <div className="h4 d-flex justify-content-center m-4">
-                  No cards found!
-                </div>
-              ) : <div>
-                {viewMode === "table" && (
-                  <div className="container m-2 p-2 hov cardlist ">
+                ) : !loading && searchResults.length === 0 ? (
+                  <div className="h4 d-flex justify-content-center m-4">
+                    No cards found!
+                  </div>
+                ) : <div>
+                  {viewMode === "table" && (
+                    <div className="container m-2 p-2 hov cardlist ">
 
 
-                    {searchResults.map((result) => (
-                      <a onClick={() => onClickCard(result)}>
+                      {searchResults.map((result) => (
+                        <a onClick={() => onClickCard(result)}>
 
-                        <div className="card mb-3 p-1" key={result.id}>
-                          <div className="row g-0">
-                            <div className="col-md-4 col-12 w-auto fcol">
-                              <img
-                                src={`${process.env.REACT_APP_CARD_IMG_SMALL_API}/${result.id}.jpg`}
-                                className="img-fluid rounded-start mt-1"
-                                alt={result.name}
-                                onError={(e) => {
-                                  e.target.onerror = null;
-                                  e.target.src = carddummysm;
-                                }}
-                              />
-                            </div>
-                            <div className="col-md-10 col-12">
+                          <div className="card mb-3 p-1" key={result.id}>
+                            <div className="row g-0">
+                              <div className="col-md-4 col-12 w-auto fcol">
+                                <img
+                                  src={`${process.env.REACT_APP_CARD_IMG_SMALL_API}/${result.id}.jpg?${new Date().getTime()}`}
+                                  className="img-fluid rounded-start mt-1"
+                                  alt={result.name}
+                                  onError={(e) => {
+                                    e.target.onerror = null;
+                                    e.target.src = carddummysm;
+                                  }}
+                                />
+                              </div>
+                              <div className="col-md-10 col-12">
 
-                              <div className="card-body">
-                                <h5 className="card-title fw-bold ">{result.name}</h5>
-                                <hr className="border-1 border-top border-primary"></hr>
-                                <div className="">
-                                  [{result.type}]&nbsp;&nbsp;[{result.race}]&nbsp;&nbsp;
-                                  {(result.atk !== null && result.atk !== undefined) && (
-                                    <span>
-                                      <i className="fa-solid fa-hand-fist"></i>
-                                      {result.atk}&nbsp;&nbsp;
-                                    </span>
-                                  )}
-                                  {(result.def !== null && result.def !== undefined) && (
-                                    <span>
-                                      <i className="fa-solid fa-shield"></i>
-                                      {result.def}
-                                    </span>
-                                  )}
+                                <div className="card-body">
+                                  <h5 className="card-title fw-bold ">{result.name}</h5>
+                                  <hr className="border-1 border-top border-primary"></hr>
+                                  <div className="">
+                                    [{result.type}]&nbsp;&nbsp;[{result.race}]&nbsp;&nbsp;
+                                    {(result.atk !== null && result.atk !== undefined) && (
+                                      <span>
+                                        <i className="fa-solid fa-hand-fist"></i>
+                                        {result.atk}&nbsp;&nbsp;
+                                      </span>
+                                    )}
+                                    {(result.def !== null && result.def !== undefined) && (
+                                      <span>
+                                        <i className="fa-solid fa-shield"></i>
+                                        {result.def}
+                                      </span>
+                                    )}
+                                  </div>
+                                  <hr className="border-1 border-top border-primary"></hr>
+
+                                  <p className="card-text">{result.desc}</p>
                                 </div>
-                                <hr className="border-1 border-top border-primary"></hr>
-
-                                <p className="card-text">{result.desc}</p>
                               </div>
                             </div>
+                            <Tooltip title="Remove from collection." TransitionComponent={Zoom}>
+                              <IconButton
+                                sx={{
+                                  position: 'absolute',
+                                  top: { xs: '0rem', sm: '0.5rem' },
+                                  bottom: { xs: 'auto', sm: 'auto' },
+                                  right: { xs: '0rem', sm: '0.5rem' },
+                                }}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  deleteCardFromDatabase(result._id)
+                                }}
+                              >
+                                <DeleteOutline />
+
+                              </IconButton>
+                            </Tooltip>
                           </div>
-                          <Tooltip title="Remove from collection." TransitionComponent={Zoom}>
-                            <IconButton
-                              sx={{
-                                position: 'absolute',
-                                top: { xs: '0rem', sm: '0.5rem' },
-                                bottom: { xs: 'auto', sm: 'auto' },
-                                right: { xs: '0rem', sm: '0.5rem' },
-                              }}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                deleteCardFromDatabase(result._id)
-                              }}
-                            >
-                              <DeleteOutline />
+                        </a>
+                      ))}
 
-                            </IconButton>
-                          </Tooltip>
+
+                    </div>
+                  )}
+
+
+                  {viewMode === "list" && (
+                    <div className="container">
+                      <div className="row">
+                        <div className="col">
+                          <table className="table">
+                            <tbody>
+                              {renderTableRows()}
+                            </tbody>
+                          </table>
                         </div>
-                      </a>
-                    ))}
-
-
-                  </div>
-                )}
-
-
-                {viewMode === "list" && (
-                  <div className="container">
-                    <div className="row">
-                      <div className="col">
-                        <table className="table">
-                          <tbody>
-                            {renderTableRows()}
-                          </tbody>
-                        </table>
                       </div>
                     </div>
-                  </div>
-                )}
-                {searchResults.length > 0 && (
-                  <div className="d-flex justify-content-center mt-3 mb-3">
-                    <button className="btn btn-primary" onClick={handleLoadMore}>
-                      Load More
-                    </button>
-                  </div>
-                )}
-              </div>}
-            </div>
-          </AccordionDetails>
-        </Accordion>
+                  )}
+                  {searchResults.length > 0 && (
+                    <div className="d-flex justify-content-center mt-3 mb-3">
+                      <button className="btn btn-primary" onClick={handleLoadMore}>
+                        Load More
+                      </button>
+                    </div>
+                  )}
+                </div>}
+              </div>
+            </AccordionDetails>
+          </Accordion>
+
+        </div>
+        <Snackbar
+          anchorOrigin={{
+            vertical: 'top',
+            horizontal: 'center',
+          }}
+          open={ShowAlert}
+          autoHideDuration={6000}
+          onClose={handleCloseAction}
+        >
+          <Alert severity={validateText.err === "success" ? "success" : "error"} >
+            {validateText.txt}
+          </Alert>
+        </Snackbar>
 
       </div>
-      <Snackbar
-        anchorOrigin={{
-          vertical: 'top',
-          horizontal: 'center',
-        }}
-        open={ShowAlert}
-        autoHideDuration={6000}
-        onClose={handleCloseAction}
-      >
-        <Alert severity={validateText.err === "success" ? "success" : "error"} >
-          {validateText.txt}
-        </Alert>
-      </Snackbar>
-
     </div>
   );
 }

@@ -51,7 +51,7 @@ export default function FromComponent() {
   return (
     <div>
       <Navbar/>
-      <div className="container p-5">
+      <div className="container "  style={{ paddingTop: "5rem" }}>
       <PageTitle title="Create Blog"/>
       <Divider className="mt-2 mb-2"/>
         <h2 className="text-center fw-bold">Write Blog</h2>

@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import logo from "./logo.svg";
 import "./navbar.css";
 import { useLogout } from '../../../hooks/useLogout'
 import { useAuthContext } from "../../../hooks/useAuthContext";
-
+import profile from "../../../assets/images/dummy-profile.png"
+import { Avatar } from "@mui/material";
 
 function Navbar() {
   const navigate = useNavigate();
@@ -22,8 +23,7 @@ function Navbar() {
   };
 
   return (
-    <div>
-      <nav className="navbar navbar-expand-lg">
+      <nav className="navbar navbar-expand-lg bg-white" style={{position:"fixed", zIndex:"1000", width:"100%"}}>
         <div className="container-fluid shadow-sm ">
           <a className="navbar-brand " onClick={() => handleNavigation("/")}>
             <img src={logo} className="logo" alt="logo" />
@@ -87,27 +87,27 @@ function Navbar() {
                 )}
                 <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
                   <li>
-                    <a className="dropdown-item " onClick={() => handleNavigation("/admin/request")} style={{cursor:"pointer"}}>
+                    <a className="dropdown-item " onClick={() => handleNavigation("/admin/request")} style={{ cursor: "pointer" }}>
                       User Request
                     </a>
                   </li>
                   <li>
-                    <a className="dropdown-item " onClick={() => handleNavigation("/admin/card")} style={{cursor:"pointer"}}>  
+                    <a className="dropdown-item " onClick={() => handleNavigation("/admin/card")} style={{ cursor: "pointer" }}>
                       Card Manager
                     </a>
                   </li>
-                  <li>
-                    <a className="dropdown-item " onClick={() => handleNavigation("/admin/deck")} style={{cursor:"pointer"}}>
+                  {/* <li>
+                    <a className="dropdown-item " onClick={() => handleNavigation("/admin/deck")} style={{ cursor: "pointer" }}>
                       Deck Manager
                     </a>
-                  </li>
+                  </li> */}
                   <li>
-                    <a className="dropdown-item " onClick={() => handleNavigation("/admin/user")} style={{cursor:"pointer"}}>
+                    <a className="dropdown-item " onClick={() => handleNavigation("/admin/user")} style={{ cursor: "pointer" }}>
                       User Manager
                     </a>
                   </li>
                   <li>
-                    <a className="dropdown-item " onClick={() => handleNavigation("/blogs")} style={{cursor:"pointer"}}>
+                    <a className="dropdown-item " onClick={() => handleNavigation("/blogs")} style={{ cursor: "pointer" }}>
                       Blog
                     </a>
                   </li>
@@ -149,13 +149,17 @@ function Navbar() {
 
               <li className="nav-item">
                 {user ? (
-                  <a onClick={clickLogout} className="nav-link text-primary btn btn-link">
-                    <i className="bi bi-box-arrow-right"></i> Logout
-                  </a>
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                    {/* <Avatar src={( profile)} /> */}
+                    <a onClick={clickLogout} className="nav-link text-primary btn btn-link">
+                      <i className="bi bi-box-arrow-right"></i> Logout
+                    </a>
+                  </div>
+
                 ) : (
                   <a className="nav-link text-primary"
-                  onClick={() => handleNavigation("/login")}
-                  style={{ cursor: "pointer" }}
+                    onClick={() => handleNavigation("/login")}
+                    style={{ cursor: "pointer" }}
                   >
                     <i className="bi bi-box-arrow-in-right "></i> Login
                   </a>
@@ -166,7 +170,6 @@ function Navbar() {
           </div>
         </div>
       </nav>
-    </div>
   );
 }
 

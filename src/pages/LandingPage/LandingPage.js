@@ -16,6 +16,7 @@ import carddummysm from "../../assets/images/dummycardsmall.jpg"
 import SwiperComponent from "../../components/features/SwiperComponent";
 import LandingMenu from "../../components/features/LandingMenu";
 import PoppularCard from "../../components/features/PopularCard";
+import CardInfo from "./cardInfo";
 
 const animatedComponents = makeAnimated();
 const minDistance = 5;
@@ -181,7 +182,7 @@ export default function LandingPage() {
                 <a onClick={() => navigateToAnotherPage(result._id)} style={{ cursor: 'zoom-in' }}>
                   {result ? (
                     <img
-                      src={`${process.env.REACT_APP_CARD_IMG_SMALL_API}/${result.id}.jpg`}
+                      src={`${process.env.REACT_APP_CARD_IMG_SMALL_API}/${result.id}.jpg?${new Date().getTime()}`}
                       className="img-fluid"
                       alt={result.name}
                       style={{ width: "10rem", borderRadius: "5px" }}
@@ -298,302 +299,304 @@ export default function LandingPage() {
   return (
     <div>
       <Navbar />
+      <div style={{paddingTop:"3rem"}}>
+        <div className="container mt-3 " >
 
-      <div className="container mt-3 " >
-
-        <Grid container spacing={{ xs: 2, md: 2 }} columns={{ xs: 4, sm: 8, md: 12 }}>
-          <Grid item xs={4} sm={8} md={6} >
-            <SwiperComponent />
+          <Grid container spacing={{ xs: 2, md: 2 }} columns={{ xs: 4, sm: 8, md: 12 }}>
+            <Grid item xs={4} sm={8} md={6} >
+              <SwiperComponent />
+            </Grid>
+            <Grid item xs={4} sm={8} md={6} >
+              <LandingMenu />
+            </Grid>
           </Grid>
-          <Grid item xs={4} sm={8} md={6} >
-            <LandingMenu />
-          </Grid>
-        </Grid>
 
-      </div>
-      <div className="container mt-3 " style={{ minHeight: "20rem" }}>
-        <Divider className="mt-3 mb-3" />
-        <h2 className="fw-bold">10 Most Popular Card</h2>
-        <div>
-          <PoppularCard />
         </div>
-      </div>
-
-      <div className="container mt-3">
-        <Divider className="mt-3 mb-3" />
-        <h2 className="fw-bold">Yu-Gi-Oh! Card Database</h2>
-        <div className="mb-1">
-          <div className="input-group rounded">
-            <input
-              id="searching"
-              name="searching"
-              type="search"
-              className="form-control searching"
-              placeholder="Search Yu-Gi-Oh! card database"
-              aria-label="Search"
-              aria-describedby="search-addon"
-              value={searchTerm}
-              onChange={handleInputChange} />
-            <button className="btn btn-outline-primary" type="button" onClick={handleRandom}>
-              Random
-            </button>
+        <div className="container mt-3 " style={{ minHeight: "20rem" }}>
+          <Divider className="mt-3 mb-3" />
+          <h2 className="fw-bold">10 Most Popular Card</h2>
+          <div>
+            <PoppularCard />
           </div>
-          <div className="d-flex justify-content-center fs-2 mt-2">
-            <div className="btn-group" role="group">
-              <button type="button" className="btn btn-outline-primary" onClick={handleViewToggle}>
-                <i className={viewMode === 'list' ? 'bi bi-table' : 'bi bi-list-ul'}></i> {viewMode === 'list' ? 'Table View' : 'List View'}
+        </div>
+        <div className="container mt-3">
+          <Divider className="mt-3 mb-3" />
+          <h2 className="fw-bold">Yu-Gi-Oh! Card Database</h2>
+          <div className="mb-1">
+            <div className="input-group rounded">
+              <input
+                id="searching"
+                name="searching"
+                type="search"
+                className="form-control searching"
+                placeholder="Search Yu-Gi-Oh! card database"
+                aria-label="Search"
+                aria-describedby="search-addon"
+                value={searchTerm}
+                onChange={handleInputChange} />
+              <button className="btn btn-outline-primary" type="button" onClick={handleRandom}>
+                Random
               </button>
-              <button type="button" className="btn btn-outline-primary" onClick={handleFilterToggle}>
-                <i className="bi bi-funnel-fill"></i> Filter
-              </button>
-              <button type="button" className="btn btn-outline-primary" onClick={resetFilters}>
-                <i className="bi bi-arrow-clockwise"></i>
-              </button>
+              <CardInfo />
             </div>
-            <select className="form-select ms-2 w-25" aria-label="Default select example" value={limit} onChange={(e) => setLimit(Number(e.target.value))}>
-              <option value={5}>Load 5</option>
-              <option value={10}>Load 10</option>
-              <option value={30}>Load 30</option>
-              <option value={50}>Load 50</option>
-            </select>
+
+            <div className="d-flex justify-content-center fs-2 mt-2">
+              <div className="btn-group" role="group">
+                <button type="button" className="btn btn-outline-primary" onClick={handleViewToggle}>
+                  <i className={viewMode === 'list' ? 'bi bi-table' : 'bi bi-list-ul'}></i> {viewMode === 'list' ? 'Table View' : 'List View'}
+                </button>
+                <button type="button" className="btn btn-outline-primary" onClick={handleFilterToggle}>
+                  <i className="bi bi-funnel-fill"></i> Filter
+                </button>
+                <button type="button" className="btn btn-outline-primary" onClick={resetFilters}>
+                  <i className="bi bi-arrow-clockwise"></i>
+                </button>
+              </div>
+              <select className="form-select ms-2 w-25" aria-label="Default select example" value={limit} onChange={(e) => setLimit(Number(e.target.value))}>
+                <option value={5}>Load 5</option>
+                <option value={10}>Load 10</option>
+                <option value={30}>Load 30</option>
+                <option value={50}>Load 50</option>
+              </select>
+            </div>
+
+
+            {showFilter && (
+              <form className={`container mt-3 p-2 filter bg-secondary rounded p-3 ${showFilter ? 'slide-in' : 'slide-out'}`}>
+                <div className="row">
+                  <div className="col-12 col-md-2 sel">
+                    <Select
+                      className="basic-single"
+                      isSearchable={true}
+                      classNamePrefix="select"
+                      defaultValue={typeOptions[0]}
+                      menuPortalTarget={document.body}
+                      name="type"
+                      value={typeOptions.find(option => option.value === selectedFilters.type)}
+                      options={typeOptions}
+                      styles={customStyles.customStyles}
+                      onChange={handleFilterChange}
+                    />
+                  </div>
+                  <div className="col-12 col-md-2 sel">
+                    <Select
+                      className="basic-single"
+                      isSearchable={true}
+                      classNamePrefix="select"
+                      defaultValue={raceOptions[0]}
+                      menuPortalTarget={document.body}
+                      name="race"
+                      value={raceOptions.find(option => option.value === selectedFilters.race)}
+                      options={raceOptions}
+                      styles={customStyles.customStyles}
+                      onChange={handleFilterChange}
+
+                    />
+                  </div>
+                  <div className="col-12 col-md-2 sel">
+                    <Select
+                      className="basic-single"
+                      isSearchable={true}
+                      classNamePrefix="select"
+                      defaultValue={frameOptions[0]}
+                      menuPortalTarget={document.body}
+                      name="FrameType"
+                      value={frameOptions.find(option => option.value === selectedFilters.frameType)}
+                      options={frameOptions}
+                      styles={customStyles.customStyles}
+                      onChange={handleFilterChange}
+                    />
+                  </div>
+                  <div className="col-12 col-md-2 sel">
+                    <Select
+                      className="basic-single"
+                      isSearchable={true}
+                      classNamePrefix="select"
+                      defaultValue={attributeOptions[0]}
+                      menuPortalTarget={document.body}
+                      value={attributeOptions.find(option => option.value === selectedFilters.attribute)}
+                      name="attribute"
+                      options={attributeOptions}
+                      styles={customStyles.customStyles}
+                      onChange={handleFilterChange}
+                    />
+                  </div>
+                  <div className="col-12 col-md-4 sel">
+                    <Select
+                      closeMenuOnSelect={false}
+                      components={animatedComponents}
+                      defaultValue={[levelOptions[0]]}
+                      menuPortalTarget={document.body}
+                      isMulti
+                      value={levelOptions.filter(option => selectedFilters.level.includes(option.value))}
+                      name="levels"
+                      options={levelOptions}
+                      className="basic-multi-select sel"
+                      classNamePrefix="select"
+                      styles={customStyles.customStyles}
+                      onChange={handleFilterChange}
+                    />
+                  </div>
+
+                  <div className="col-12 col-md-2 sel">
+                    <Select
+                      className="basic-single"
+                      isSearchable={true}
+                      classNamePrefix="select"
+                      defaultValue={[sortOption[0]]}
+                      menuPortalTarget={document.body}
+                      name="sortBy"
+                      value={sortOption.filter(option => option.value === selectedFilters.sort)}
+                      options={sortOption}
+                      styles={customStyles.customStyles}
+                      onChange={handleFilterChange}
+                    />
+                  </div>
+
+
+
+                  <div className="row">
+                    <div className="col-12 col-md-6 ">
+                      <Typography variant="h6" gutterBottom>
+                        Attack
+                      </Typography>
+                      <Box display="flex" alignItems="center">
+                        <Box className="flex-start" marginRight={2}>{minAtk}</Box>
+                        <Slider
+                          aria-label="ATK"
+                          value={atkValue}
+                          onChange={handleChangeAtk}
+                          disableSwap
+                        />
+                        <Box className="flex-end" marginLeft={2}>{maxAtk}</Box>
+                      </Box>
+                    </div>
+                    <div className="col-12 col-md-6 ">
+                      <Typography variant="h6" gutterBottom>
+                        Defense
+                      </Typography>
+                      <Box display="flex" alignItems="center">
+                        <Box className="flex-start" marginRight={2}>{minDef}</Box>
+                        <Slider
+                          aria-label="ATK"
+                          value={defValue}
+                          onChange={handleChangeDef}
+                          disableSwap
+                        />
+                        <Box className="flex-end" marginLeft={2}>{maxDef}</Box>
+                      </Box>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            )}
+
           </div>
 
 
-          {showFilter && (
-            <form className={`container mt-3 p-2 filter bg-secondary rounded p-3 ${showFilter ? 'slide-in' : 'slide-out'}`}>
-              <div className="row">
-                <div className="col-12 col-md-2 sel">
-                  <Select
-                    className="basic-single"
-                    isSearchable={true}
-                    classNamePrefix="select"
-                    defaultValue={typeOptions[0]}
-                    menuPortalTarget={document.body}
-                    name="type"
-                    value={typeOptions.find(option => option.value === selectedFilters.type)}
-                    options={typeOptions}
-                    styles={customStyles.customStyles}
-                    onChange={handleFilterChange}
-                  />
+
+          {loading ? (
+            <div className="card mb-3 p-1">
+              <div className="row g-0">
+                <div className="col-md-4 col-12 w-auto fcol">
+                  <Skeleton variant="rectangular" width={170} height={210} />
                 </div>
-                <div className="col-12 col-md-2 sel">
-                  <Select
-                    className="basic-single"
-                    isSearchable={true}
-                    classNamePrefix="select"
-                    defaultValue={raceOptions[0]}
-                    menuPortalTarget={document.body}
-                    name="race"
-                    value={raceOptions.find(option => option.value === selectedFilters.race)}
-                    options={raceOptions}
-                    styles={customStyles.customStyles}
-                    onChange={handleFilterChange}
-
-                  />
-                </div>
-                <div className="col-12 col-md-2 sel">
-                  <Select
-                    className="basic-single"
-                    isSearchable={true}
-                    classNamePrefix="select"
-                    defaultValue={frameOptions[0]}
-                    menuPortalTarget={document.body}
-                    name="FrameType"
-                    value={frameOptions.find(option => option.value === selectedFilters.frameType)}
-                    options={frameOptions}
-                    styles={customStyles.customStyles}
-                    onChange={handleFilterChange}
-                  />
-                </div>
-                <div className="col-12 col-md-2 sel">
-                  <Select
-                    className="basic-single"
-                    isSearchable={true}
-                    classNamePrefix="select"
-                    defaultValue={attributeOptions[0]}
-                    menuPortalTarget={document.body}
-                    value={attributeOptions.find(option => option.value === selectedFilters.attribute)}
-                    name="attribute"
-                    options={attributeOptions}
-                    styles={customStyles.customStyles}
-                    onChange={handleFilterChange}
-                  />
-                </div>
-                <div className="col-12 col-md-4 sel">
-                  <Select
-                    closeMenuOnSelect={false}
-                    components={animatedComponents}
-                    defaultValue={[levelOptions[0]]}
-                    menuPortalTarget={document.body}
-                    isMulti
-                    value={levelOptions.filter(option => selectedFilters.level.includes(option.value))}
-                    name="levels"
-                    options={levelOptions}
-                    className="basic-multi-select sel"
-                    classNamePrefix="select"
-                    styles={customStyles.customStyles}
-                    onChange={handleFilterChange}
-                  />
-                </div>
-
-                <div className="col-12 col-md-2 sel">
-                  <Select
-                    className="basic-single"
-                    isSearchable={true}
-                    classNamePrefix="select"
-                    defaultValue={[sortOption[0]]}
-                    menuPortalTarget={document.body}
-                    name="sortBy"
-                    value={sortOption.filter(option => option.value === selectedFilters.sort)}
-                    options={sortOption}
-                    styles={customStyles.customStyles}
-                    onChange={handleFilterChange}
-                  />
-                </div>
-
-
-
-                <div className="row">
-                  <div className="col-12 col-md-6 ">
-                    <Typography variant="h6" gutterBottom>
-                      Attack
-                    </Typography>
-                    <Box display="flex" alignItems="center">
-                      <Box className="flex-start" marginRight={2}>{minAtk}</Box>
-                      <Slider
-                        aria-label="ATK"
-                        value={atkValue}
-                        onChange={handleChangeAtk}
-                        disableSwap
-                      />
-                      <Box className="flex-end" marginLeft={2}>{maxAtk}</Box>
-                    </Box>
-                  </div>
-                  <div className="col-12 col-md-6 ">
-                    <Typography variant="h6" gutterBottom>
-                      Defense
-                    </Typography>
-                    <Box display="flex" alignItems="center">
-                      <Box className="flex-start" marginRight={2}>{minDef}</Box>
-                      <Slider
-                        aria-label="ATK"
-                        value={defValue}
-                        onChange={handleChangeDef}
-                        disableSwap
-                      />
-                      <Box className="flex-end" marginLeft={2}>{maxDef}</Box>
-                    </Box>
-                  </div>
-                </div>
-              </div>
-            </form>
-          )}
-
-        </div>
-
-
-
-        {loading ? (
-          <div className="card mb-3 p-1">
-            <div className="row g-0">
-              <div className="col-md-4 col-12 w-auto fcol">
-                <Skeleton variant="rectangular" width={170} height={210} />
-              </div>
-              <div className="col-md-10 col-12">
-                <Skeleton />
-                <div className="card-body">
-                  <hr className="border-1 border-top border-primary" />
-                  <div className="">
+                <div className="col-md-10 col-12">
+                  <Skeleton />
+                  <div className="card-body">
+                    <hr className="border-1 border-top border-primary" />
+                    <div className="">
+                      <Skeleton animation="wave" />
+                    </div>
+                    <hr className="border-1 border-top border-primary" />
                     <Skeleton animation="wave" />
                   </div>
-                  <hr className="border-1 border-top border-primary" />
-                  <Skeleton animation="wave" />
                 </div>
               </div>
             </div>
-          </div>
-        ) : !loading && searchResults.length === 0 ? (
-          <div className="h4 d-flex justify-content-center m-4">
-            No cards found!
-          </div>
-        ) : <div>
-          {viewMode === "table" && (
-            <div className="container m-2 p-2 hov cardlist ">
-              {searchResults.map((result) => (
-                <a onClick={() => navigateToAnotherPage(result._id)}>
-                  <div className="card mb-3 p-1" key={result.id}>
-                    <div className="row g-0">
-                      <div className="col-md-4 col-12 w-auto fcol">
+          ) : !loading && searchResults.length === 0 ? (
+            <div className="h4 d-flex justify-content-center m-4">
+              No cards found!
+            </div>
+          ) : <div>
+            {viewMode === "table" && (
+              <div className="container m-2 p-2 hov cardlist ">
+                {searchResults.map((result) => (
+                  <a onClick={() => navigateToAnotherPage(result._id)}>
+                    <div className="card mb-3 p-1" key={result.id}>
+                      <div className="row g-0">
+                        <div className="col-md-4 col-12 w-auto fcol">
 
-                        <img
-                          src={`${process.env.REACT_APP_CARD_IMG_SMALL_API}/${result.id}.jpg`}
-                          className="img-fluid rounded-start mt-1"
-                          alt={result.name}
-                          style={{ width: "10rem", borderRadius: "5px" }}
-                          onError={(e) => {
-                            e.target.onerror = null;
-                            e.target.src = carddummysm;
-                          }}
-                        />
+                          <img
+                            src={`${process.env.REACT_APP_CARD_IMG_SMALL_API}/${result.id}.jpg?${new Date().getTime()}`}
+                            className="img-fluid rounded-start mt-1"
+                            alt={result.name}
+                            style={{ width: "10rem", borderRadius: "5px" }}
+                            onError={(e) => {
+                              e.target.onerror = null;
+                              e.target.src = carddummysm;
+                            }}
+                          />
 
-                      </div>
-                      <div className="col-md-10 col-12">
+                        </div>
+                        <div className="col-md-10 col-12">
 
-                        <div className="card-body">
-                          <h5 className="card-title fw-bold ">{result.name}</h5>
-                          <hr className="border-1 border-top border-primary"></hr>
-                          <div className="">
-                            [{result.type}]&nbsp;&nbsp;[{result.race}]&nbsp;&nbsp;
-                            {(result.atk !== null && result.atk !== undefined) && (
-                              <span>
-                                <i className="fa-solid fa-hand-fist"></i>
-                                {result.atk}&nbsp;&nbsp;
-                              </span>
-                            )}
-                            {(result.def !== null && result.def !== undefined) && (
-                              <span>
-                                <i className="fa-solid fa-shield"></i>
-                                {result.def}
-                              </span>
-                            )}
+                          <div className="card-body">
+                            <h5 className="card-title fw-bold ">{result.name}</h5>
+                            <hr className="border-1 border-top border-primary"></hr>
+                            <div className="">
+                              [{result.type}]&nbsp;&nbsp;[{result.race}]&nbsp;&nbsp;
+                              {(result.atk !== null && result.atk !== undefined) && (
+                                <span>
+                                  <i className="fa-solid fa-hand-fist"></i>
+                                  {result.atk}&nbsp;&nbsp;
+                                </span>
+                              )}
+                              {(result.def !== null && result.def !== undefined) && (
+                                <span>
+                                  <i className="fa-solid fa-shield"></i>
+                                  {result.def}
+                                </span>
+                              )}
+                            </div>
+                            <hr className="border-1 border-top border-primary"></hr>
+
+                            <p className="card-text">{result.desc}</p>
                           </div>
-                          <hr className="border-1 border-top border-primary"></hr>
-
-                          <p className="card-text">{result.desc}</p>
                         </div>
                       </div>
                     </div>
+                  </a>
+                ))}
+
+
+              </div>
+            )}
+            {viewMode === "list" && (
+              <div className="container">
+                <div className="row">
+                  <div className="col">
+                    <table className="table">
+                      <tbody>
+                        {renderTableRows()}
+                      </tbody>
+                    </table>
                   </div>
-                </a>
-              ))}
-
-
-            </div>
-          )}
-
-
-          {viewMode === "list" && (
-            <div className="container">
-              <div className="row">
-                <div className="col">
-                  <table className="table">
-                    <tbody>
-                      {renderTableRows()}
-                    </tbody>
-                  </table>
                 </div>
               </div>
-            </div>
-          )}
-          {searchResults.length > 0 && (
-            <div className="d-flex justify-content-center mt-3 mb-3">
-              <button className="btn btn-primary" onClick={handleLoadMore}>
-                Load More
-              </button>
-            </div>
-          )}
-        </div>}
+            )}
+            {searchResults.length > 0 && (
+              <div className="d-flex justify-content-center mt-3 mb-3">
+                <button className="btn btn-primary" onClick={handleLoadMore}>
+                  Load More
+                </button>
+              </div>
+            )}
+          </div>}
+        </div>
+
       </div>
+
     </div>
   );
 }

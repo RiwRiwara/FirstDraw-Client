@@ -42,7 +42,7 @@ function CardDetail(props) {
     return (
         <>
             <Navbar />
-            <div className='container mt-3 mb-3'>
+            <div className='container mb-3'  style={{ paddingTop: "5rem" }}>
                 {card ? (
                     <div >
                         <Breadcrumbs aria-label="breadcrumb">

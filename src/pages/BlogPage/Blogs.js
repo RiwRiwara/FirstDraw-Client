@@ -27,7 +27,7 @@ function Blogs() {
   return (
     <div>
       <Navbar />
-      <div className="container mt-4">
+      <div className="container"  style={{ paddingTop: "5rem" }}>
         <div className="h1 mb-3 fw-bold">Blogs</div>
 
         {isAdmin && (

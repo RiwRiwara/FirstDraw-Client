@@ -36,7 +36,7 @@ function Login() {
                 <CircularProgress color="inherit" />
             </Backdrop>
             <Navbar />
-            <div className="divform p-3 min-vh-100">
+            <div className="divform  "  style={{ paddingTop: "5rem", minHeight:"42rem" }}>
                 <form onSubmit={submitForm}>
                     <div className="h1 d-flex justify-content-center fw-bold">Login <i className="m-1 fw-bold bi bi-box-arrow-in-left"></i></div>
                     <p className='d-flex justify-content-center'>Login to First Draw website!</p>

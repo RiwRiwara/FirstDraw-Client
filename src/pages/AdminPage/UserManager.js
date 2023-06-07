@@ -10,9 +10,13 @@ import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import {
   FormLabel, Radio, RadioGroup, Grid, Box, Button, FormControlLabel, InputLabel, MenuItem, CircularProgress,
-  Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, Switch, Backdrop, TextField, Divider
+  Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, Switch, Backdrop, TextField, Divider, CardActionArea, CardMedia
 } from '@mui/material';
 import proimg from "../../assets/images/dummy-profile.png"
+import silver from "../../assets/images/silver_image.jpg"
+import blue from "../../assets/images/blue_image.jpg"
+import dragon from "../../assets/images/dargon_image.png"
+
 import _ from 'lodash';
 import React from "react";
 import Swal from "sweetalert2";
@@ -168,11 +172,109 @@ const UserManager = () => {
     })
 
   }
+const [nall , setnall] = useState(0)
+const [sall , setsall] = useState(0)
+const [ball , setball] = useState(0)
+const [wall , setwall] = useState(0)
+  useEffect(() => {
+    axios.get(`${process.env.REACT_APP_API}/users/summary`).
+      then((res) => {
+        let sData = res.data
+        setnall(sData.total)
+        setsall(sData.details[0].count)
+        setball(sData.details[1].count)
+        setwall(sData.details[2].count)
+      }).catch((err) => {
+        console.log(err)
+      })
+  }, [refresh])
+
   return (
     <>
       <Navbar />
-      <div className="container mt-3 min-vh-100">
+      <div className="container min-vh-100"   style={{ paddingTop: "5rem" }}>
         <PageTitle title="User Manager" />
+        <div className="mt-2 mb-2" style={{ minHeight: "10rem" }}>
+          <Grid container spacing={1} columns={{ xs: 4, sm: 4, md: 12 }}>
+            <Grid xs={2} sm={2} md={3} className="justify-content-center d-flex">
+              <Card sx={{ maxWidth: 200 }}>
+                <CardActionArea>
+                  <CardMedia
+                    component="img"
+                    height="140"
+                    image={proimg}
+                  />
+                  <CardContent>
+                    <Typography gutterBottom variant="h5" component="div">
+                      {nall} Users.
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      Number of all users.
+                    </Typography>
+                  </CardContent>
+                </CardActionArea>
+              </Card>
+            </Grid>
+            <Grid xs={2} sm={2} md={3} className="justify-content-center d-flex">
+              <Card sx={{ maxWidth: 200 }}>
+                <CardActionArea>
+                  <CardMedia
+                    component="img"
+                    height="140"
+                    image={silver}
+                  />
+                  <CardContent>
+                    <Typography gutterBottom variant="h5" component="div">
+                      {sall} Users.
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      Number of silver user.
+                    </Typography>
+                  </CardContent>
+                </CardActionArea>
+              </Card>
+            </Grid>
+            <Grid xs={2} sm={2} md={3} className="justify-content-center d-flex ">
+              <Card sx={{ maxWidth: 200 }}>
+                <CardActionArea>
+                  <CardMedia
+                    component="img"
+                    height="140"
+                    image={blue}
+                  />
+                  <CardContent>
+                    <Typography gutterBottom variant="h5" component="div">
+                      {ball} Users.
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      Number of Blue-eye users.
+                    </Typography>
+                  </CardContent>
+                </CardActionArea>
+              </Card>
+            </Grid>
+            <Grid xs={2} sm={2} md={3} className="justify-content-center d-flex">
+              <Card sx={{ maxWidth: 200 }}>
+                <CardActionArea>
+                  <CardMedia
+                    component="img"
+                    height="140"
+                    image={dragon}
+                  />
+                  <CardContent>
+                    <Typography gutterBottom variant="h5" component="div">
+                      {wall} Users.
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      Number of Winged Ra users.
+                    </Typography>
+                  </CardContent>
+                </CardActionArea>
+              </Card>
+            </Grid>
+          </Grid>
+        </div>
+        <h3 className="fw-bold">Find all users.</h3>
         <div className="mt-3 mb-3">
           <div className="input-group rounded">
             <div className="input-group rounded">
@@ -244,7 +346,7 @@ const UserManager = () => {
             <div className="input-grou d-flex justify-content-between">
 
               <h3 className="fw-bold">{currentUser.displayname || "Guest"}</h3>
-              <SearchIcon className="fs-1" onClick={()=>{navigate(`${currentUser._id}`)}}/>
+              <SearchIcon className="fs-1" onClick={() => { navigate(`${currentUser._id}`) }} />
             </div>
             <Grid container columns={{ xs: 4, sm: 8, md: 12 }}>
               <Grid item xs={4} sm={8} md={3}>

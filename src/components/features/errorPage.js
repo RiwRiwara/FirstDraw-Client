@@ -7,10 +7,11 @@ export default function ErrorPage() {
   return (
     <div>
       <Navbar />
-      <div className="container" style={{ minHeight: "30rem" }}>
-      <PageTitle title="Error Page"></PageTitle>
+      <div style={{ paddingTop: "5rem" }}>
+        <div className="container" style={{ minHeight: "30rem" }}>
+          <PageTitle title="Error Page"></PageTitle>
+        </div>
       </div>
-
 
 
     </div>

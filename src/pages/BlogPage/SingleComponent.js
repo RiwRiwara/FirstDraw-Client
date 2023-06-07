@@ -78,7 +78,7 @@ const SingleComponent = () => {
   return (
     <div>
       <Navbar />
-      <div className="container p-3">
+      <div className="container "  style={{ paddingTop: "5rem" }}>
         <PageTitle title="Single Blog" />
 
         {isAdmin && (

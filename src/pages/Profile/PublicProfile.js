@@ -14,7 +14,7 @@ function PublicProfile(props) {
     const bio = props.bio;
     const email = props.email;
     const cardCollection = props.cardCollection
-
+    console.log(cardCollection)
 
     const navigateToAnotherPage = (path) => {
         const destinationRoute = `${path}`;
@@ -102,7 +102,8 @@ function PublicProfile(props) {
                         <div className="col">
                             <table className="table">
                                 <tbody>
-                                    {renderTableRows()}
+                                    
+                                {cardCollection && (renderTableRows())}
                                 </tbody>
                             </table>
                         </div>

@@ -110,67 +110,71 @@ function AnotherProfile() {
     return (
         <div>
             <Navbar />
-            {(!isLoading && currentUser) ? (
-                <div className='container'>
-                <PageTitle title="View user detail."/>
-                    <div className="container mt-2 p-2">
-                        <div className='d-flex justify-content-center'>
-                            <Stack
-                                direction="row"
-                                divider={<Divider orientation="vertical" flexItem />}
-                                spacing={2}>
-                                <h4 className='fw-bold'>{currentUser.displayname}</h4>
-                
-                                <h4 className='fw-bold'>
-                                    {currentUser.tier === "Silver" ? "Silver" : currentUser.tier === "Blue" ? "Blue-Eye" : "Dragon"}
-                                </h4>
-                                {/* <h4 className='fw-bold'>Item 3</h4> */}
-                            </Stack>
-                        </div>
+            <div style={{ paddingTop: "5rem" }}>
+                {(!isLoading && currentUser) ? (
+                    <div className='container'>
+                        <PageTitle title="View user detail." />
+                        <div className="container mt-2 p-2">
+                            <div className='d-flex justify-content-center'>
+                                <Stack
+                                    direction="row"
+                                    divider={<Divider orientation="vertical" flexItem />}
+                                    spacing={2}>
+                                    <h4 className='fw-bold'>{currentUser.displayname}</h4>
 
-                        <hr className="bg-danger border-4 border-top border-primary"></hr>
-                        <Grid container spacing={1} columns={{ xs: 4, sm: 8, md: 12 }}>
-                            <Grid item xs={4} sm={8} md={4} key={"PP1"}>
-                                <div className='d-flex justify-content-center'>
-                                    <img
-                                        src={currentUser.profile_img || profile}
-                                        className="rounded profileimg"
-                                        style={{ width: '15rem', height: "16rem" }}
-                                        alt=""
-                                    />
-                                </div>
+                                    <h4 className='fw-bold'>
+                                        {currentUser.tier === "Silver" ? "Silver" : currentUser.tier === "Blue" ? "Blue-Eye" : "Dragon"}
+                                    </h4>
+                                    {/* <h4 className='fw-bold'>Item 3</h4> */}
+                                </Stack>
+                            </div>
+
+                            <hr className="bg-danger border-4 border-top border-primary"></hr>
+                            <Grid container spacing={1} columns={{ xs: 4, sm: 8, md: 12 }}>
+                                <Grid item xs={4} sm={8} md={4} key={"PP1"}>
+                                    <div className='d-flex justify-content-center'>
+                                        <img
+                                            src={currentUser.profile_img || profile}
+                                            className="rounded profileimg"
+                                            style={{ width: '15rem', height: "16rem" }}
+                                            alt=""
+                                        />
+                                    </div>
+                                </Grid>
+                                <Grid item xs={4} sm={8} md={8} key={"PP2"}>
+                                    <div className='bg-secondary p-2 rounded mb-3'>
+                                        {currentUser.email}
+                                    </div>
+                                    <div className='bg-secondary p-2 rounded' style={{ minHeight: "10rem" }}>
+                                        {currentUser.bio}
+                                    </div>
+                                </Grid>
                             </Grid>
-                            <Grid item xs={4} sm={8} md={8} key={"PP2"}>
-                                <div className='bg-secondary p-2 rounded mb-3'>
-                                    {currentUser.email}
-                                </div>
-                                <div className='bg-secondary p-2 rounded' style={{ minHeight: "10rem" }}>
-                                    {currentUser.bio}
-                                </div>
-                            </Grid>
-                        </Grid>
-                        <hr className="bg-danger border-4 border-top border-primary"></hr>
-                        <h4 className='fw-bold'>Collection - Cards</h4>
-                        <div className="container bg-secondary rounded">
-                            <div className="row">
-                                <div className="col">
-                                    <table className="table">
-                                        <tbody>
-                                            {cardCollection && (renderTableRows())}
-                                        </tbody>
-                                    </table>
+                            <hr className="bg-danger border-4 border-top border-primary"></hr>
+                            <h4 className='fw-bold'>Collection - Cards</h4>
+                            <div className="container bg-secondary rounded">
+                                <div className="row">
+                                    <div className="col">
+                                        <table className="table">
+                                            <tbody>
+                                                {cardCollection && (renderTableRows())}
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            ) : (
-                <>
-                    <div className="container mt-2 p-2">
-                        <p>Loading  . . . </p>
-                    </div>
-                </>
-            )}
+                ) : (
+                    <>
+                        <div className="container mt-2 p-2">
+                            <p>Loading  . . . </p>
+                        </div>
+                    </>
+                )}
+
+            </div>
+
 
         </div>
     )

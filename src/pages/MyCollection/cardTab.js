@@ -153,7 +153,7 @@ function Tab1Component(props) {
                                     style={{ cursor: 'zoom-in' }}>
 
                                     <img
-                                        src={`${process.env.REACT_APP_CARD_IMG_SMALL_API}/${result.id}.jpg`}
+                                        src={`${process.env.REACT_APP_CARD_IMG_SMALL_API}/${result.id}.jpg?${new Date().getTime()}`}
                                         className="img-fluid"
                                         alt={result.name}
                                         onError={(e) => {
@@ -299,7 +299,7 @@ function Tab1Component(props) {
                                                 <div className="row g-0">
                                                     <div className="col-md-4 col-12 w-auto fcol">
                                                         <img
-                                                            src={`${process.env.REACT_APP_CARD_IMG_SMALL_API}/${result.id}.jpg`}
+                                                            src={`${process.env.REACT_APP_CARD_IMG_SMALL_API}/${result.id}.jpg?${new Date().getTime()}`}
                                                             className="img-fluid rounded-start mt-1"
                                                             alt={result.name}
                                                             style={{ width: "10rem", borderRadius: "5px" }}
@@ -374,7 +374,7 @@ function Tab1Component(props) {
                                                             {index + 1}.
                                                         </Typography>
                                                         <img
-                                                            src={`${process.env.REACT_APP_CARD_IMG_SMALL_API}/${result.id}.jpg`}
+                                                            src={`${process.env.REACT_APP_CARD_IMG_SMALL_API}/${result.id}.jpg?${new Date().getTime()}`}
                                                             className="img-fluid rounded-start mt-1"
                                                             alt={result.name}
                                                             style={{ width: "2rem", borderRadius: "5px" }}

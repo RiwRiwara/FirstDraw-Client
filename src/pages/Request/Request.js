@@ -190,7 +190,7 @@ const Request = () => {
   return (
     <>
       <Navbar />
-      <div className="container mt-3 min-vh-100">
+      <div className="container"  style={{ paddingTop: "5rem" }}>
         <PageTitle title="Request card" />
 
         <div className="mt-3 mb-4">
