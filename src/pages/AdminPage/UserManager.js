@@ -101,7 +101,7 @@ const UserManager = () => {
 
     }
 
-
+setRefresh(!refresh)
   };
   const [roleSelected, setRole] = useState()
   const [tierSelected, setTier] = useState()
@@ -176,18 +176,40 @@ const [nall , setnall] = useState(0)
 const [sall , setsall] = useState(0)
 const [ball , setball] = useState(0)
 const [wall , setwall] = useState(0)
-  useEffect(() => {
-    axios.get(`${process.env.REACT_APP_API}/users/summary`).
-      then((res) => {
-        let sData = res.data
-        setnall(sData.total)
-        setsall(sData.details[0].count)
-        setball(sData.details[1].count)
-        setwall(sData.details[2].count)
-      }).catch((err) => {
-        console.log(err)
-      })
-  }, [refresh])
+useEffect(() => {
+  axios.get(`${process.env.REACT_APP_API}/users/summary`).
+  then((res) => {
+      let sData = res.data;
+      setnall(sData.total);
+
+      // Get count for specific tiers
+      let dragonCount, blueCount, silverCount;
+
+      for (let i = 0; i < sData.details.length; i++) {
+          switch (sData.details[i].tier) {
+              case "Dragon":
+                  dragonCount = sData.details[i].count;
+                  break;
+              case "Blue":
+                  blueCount = sData.details[i].count;
+                  break;
+              case "Silver":
+                  silverCount = sData.details[i].count;
+                  break;
+              default:
+                  break;
+          }
+      }
+
+      // You can now use these counts to update your state
+      setwall(dragonCount);
+      setball(blueCount);
+      setsall(silverCount);
+
+  }).catch((err) => {
+      console.log(err)
+  })
+}, [refresh])
 
   return (
     <>
