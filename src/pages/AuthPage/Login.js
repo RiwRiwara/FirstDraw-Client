@@ -70,10 +70,11 @@ function Login() {
                             className="form-check-input"
                             id="" />
                         <label className="form-check-label" for="">Remember me</label>
-                    </div> */}
+                    </div>
                     <button type="submit" className="btn btn-primary w-100">Login</button>
                     <a type='button' className='btn' onClick={adminLogin}>admin</a>
                     <a type='button' className='btn' onClick={userLogin}>user</a>
+                     */}
                 </form>
                 <div className="text-center mt-3">Don’t have an account?<Link to="/regsiter">Register</Link></div>
             </div>
